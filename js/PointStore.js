@@ -25,6 +25,7 @@ function Point(lat, lon, name, tags) {
  * base names, terrible search algorithms, etc.
  */
 function PointStore(baseKey, load) {
+  this.points = [];
 }
 
 /**
@@ -41,12 +42,14 @@ PointStore.prototype.getByTag = function(tag) {
  * @return (possibly empty) list of points
  */
 PointStore.prototype.getAll = function() {
+  return this.points;
 }
 
 /**
  * @return number of points contained in the PointStore
  */
 PointStore.prototype.length = function() {
+  return this.points.length;
 }
 
 /**
@@ -54,8 +57,13 @@ PointStore.prototype.length = function() {
  *
  * If the point does not exist in the PointStore, it will be created.
  * @param {Point} the point to update
+ * @param {function} to call after the save succeeds (optional)
+ * @param {function} to call if the save fails (optional)
  */
-PointStore.prototype.updatePoint = function(p) {
+PointStore.prototype.updatePoint = function(p, success, failure) {
+  this.points.push(p);
+  if (success)
+    success();
 }
 
 /**

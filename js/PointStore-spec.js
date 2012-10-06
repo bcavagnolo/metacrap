@@ -15,12 +15,12 @@ describe("PointStore", function() {
   });
 
   it("should store items", function() {
-    var stored = {s1:"a string", i1:3, o1:{a: 1, b: "test"}};
+    var stored = new Point(0.0, 0.0, "test1", []);
     var retrieved = null;
     var flag = false;
 
     runs(function () {
-      ps.savePoint(stored, function () {
+      ps.updatePoint(stored, function () {
         flag = true;
       });
     });
@@ -31,7 +31,9 @@ describe("PointStore", function() {
     }, "the retrieved value should equal the stored value", 1000);
 
     runs(function () {
-      expect(retrieved).toEqual(stored);
+      expect(retrieved).not.toBe(null);
+      expect(retrieved.length).toEqual(1);
+      expect(retrieved[0]).toEqual(stored);
     });
 
   });
