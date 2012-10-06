@@ -4,6 +4,17 @@ describe("PointStore", function() {
 
   beforeEach(function() {
     ps = new PointStore(baseName);
+    var loaded = false;
+
+    runs(function () {
+      ps.load(function () {
+        loaded = true;
+      });
+    });
+
+    waitsFor(function () {
+      return loaded;
+    }, "the retrieved value should equal the stored value", 3000);
   });
 
   afterEach(function() {
@@ -35,6 +46,5 @@ describe("PointStore", function() {
       expect(retrieved.length).toEqual(1);
       expect(retrieved[0]).toEqual(stored);
     });
-
   });
 });
