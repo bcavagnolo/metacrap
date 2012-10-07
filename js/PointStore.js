@@ -1,4 +1,4 @@
-var openKVURL = "http://api.openkeyval.org/";
+var openKVURL = "http://riyadh.cusp.berkeley.edu/";
 
 /**
  * Create a Point suitable to be stored in the PointStore
