@@ -126,8 +126,25 @@ PointStore.prototype.updatePoint = function(p, success) {
 /**
  * remove a point from the PointStore
  * @param {Point} the point p to remove
+ * @param {function} to be called after deleting is complete
  */
-PointStore.prototype.removePoint = function(p) {
+PointStore.prototype.removePoint = function(p, done) {
+  data = new Object();
+  data[this.baseKey + "_" + p.idx] = null;
+  ps = this;
+  $.ajax({
+    ps: ps,
+    p: p,
+    psDone: done,
+    url: this._getURL(p.idx, true),
+    data: data,
+    dataType: "jsonp",
+    success: function(data) {
+      this.ps.points.splice(this.ps.points.indexOf(this.p), 1);
+      if (this.psDone)
+        this.psDone();
+    }
+  });
 };
 
 /**
@@ -135,25 +152,14 @@ PointStore.prototype.removePoint = function(p) {
  * @param {function} to be called after deleting is complete
  */
 PointStore.prototype.deletePointStore = function(done) {
-  p = this.points.pop();
+  p = this.points[0];
   if (!p) {
     this.end = 0;
     if (done)
       done();
     return;
   }
-  data = new Object();
-  data[this.baseKey + "_" + p.idx] = null;
-  ps = this;
-  psDone = done;
-  $.ajax({
-    ps: ps,
-    psDone: done,
-    url: this._getURL(p.idx, true),
-    data: data,
-    dataType: "jsonp",
-    success: function(data) {
-      this.ps.deletePointStore(psDone);
-    }
+  this.removePoint(p, function(data) {
+    this.ps.deletePointStore(done);
   });
 };
