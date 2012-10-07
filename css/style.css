@@ -1,0 +1,46 @@
+/* CSS notes
+Font styled to match Google
+	font-family: arial
+	font-size: 13px;
+	text colors: #000 and #15C (blue)
+*/
+
+/* General styling */
+body{
+	font-family: arial, sans-serif;
+	font-size: 13px;
+}
+
+a{
+	color: #15C;
+}
+
+
+/* Styling the input box */
+#mapTag{
+	width: 15em;
+}
+
+/* Styling the autocomplete box, which is a <ul> */
+.ui-autocomplete {
+	border: 1px solid #ddd;
+	width: 1em;
+	padding: .5em .7em;  /* top/bottom and left/right */
+	list-style: none;
+}
+
+/* Styling individual menu items */
+.ui-menu-item{
+	padding: 0 .5em;
+	color: #15C;
+}
+
+/* Styling the autocomplete category headers */
+.ui-autocomplete-category {
+	font-weight: bold;
+	line-height: 1.5;
+}
+
+
+
+
