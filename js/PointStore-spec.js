@@ -14,11 +14,21 @@ describe("PointStore", function() {
 
     waitsFor(function () {
       return loaded;
-    }, "the retrieved value should equal the stored value", 3000);
+    }, "point store to load", 3000);
   });
 
   afterEach(function() {
-    ps.deletePointStore();
+    var deleted = false;
+
+    runs(function () {
+      ps.deletePointStore(function () {
+        deleted = true;
+      });
+    });
+
+    waitsFor(function () {
+      return deleted;
+    }, "point store to delete", 3000);
   });
 
   it("should start with empty list", function() {
@@ -45,6 +55,28 @@ describe("PointStore", function() {
       expect(retrieved).not.toBe(null);
       expect(retrieved.length).toEqual(1);
       expect(retrieved[0]).toEqual(stored);
+    });
+  });
+
+  it("should actually persist items", function() {
+    var point = new Point(0.0, 0.0, "some other name", []);
+    var ps2 = new PointStore(baseName);
+    var done = false;
+
+    runs(function () {
+      ps.updatePoint(point, function () {
+        ps2.load(function () {
+          done = true;
+        });
+      });
+    });
+
+    waitsFor(function () {
+      return done;
+    }, "the load should succeed", 3000);
+
+    runs(function () {
+      expect(ps2.getAll()).toEqual(ps.getAll());
     });
   });
 });

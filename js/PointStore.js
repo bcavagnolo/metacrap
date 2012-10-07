@@ -1,3 +1,5 @@
+var openKVURL = "http://api.openkeyval.org/";
+
 /**
  * Create a Point suitable to be stored in the PointStore
  */
@@ -6,6 +8,11 @@ function Point(lat, lon, name, tags) {
   this.lon = lon;
   this.name = name;
   this.tags = tags;
+
+  /* the following members are used internally by PointStore and should not be
+   * altered by the caller
+   */
+  this.idx = -1;
 }
 
 /**
@@ -25,6 +32,15 @@ function Point(lat, lon, name, tags) {
  */
 function PointStore(baseKey, load) {
   this.points = [];
+  this.baseKey = baseKey;
+  this.end = 0;
+}
+
+PointStore.prototype._getURL = function(i, store) {
+  if (store)
+    return openKVURL + 'store/';
+  else
+    return openKVURL + this.baseKey + "_" + i;
 }
 
 /**
@@ -32,8 +48,26 @@ function PointStore(baseKey, load) {
  * @param {function} function to be called after initial loading is complete
  */
 PointStore.prototype.load = function(success) {
-  if (success)
-    success();
+  ps = this;
+  $.ajax({
+    ps: ps,
+    psSuccess: success,
+    url: this._getURL(this.end),
+    dataType: "jsonp",
+    success: function(data) {
+      if (!data) {
+        /* in this case, we're done */
+        if (this.psSuccess) {
+          this.psSuccess();
+        }
+        return;
+      }
+      this.ps.points.push(JSON.parse(data));
+      this.ps.end++;
+      /* Recursion.  Bold.  Hopefully we won't run out of stack. */
+      this.ps.load(this.psSuccess);
+    }
+  });
 };
 
 /**
@@ -66,12 +100,27 @@ PointStore.prototype.length = function() {
  * If the point does not exist in the PointStore, it will be created.
  * @param {Point} the point to update
  * @param {function} to call after the save succeeds (optional)
- * @param {function} to call if the save fails (optional)
  */
-PointStore.prototype.updatePoint = function(p, success, failure) {
-  this.points.push(p);
-  if (success)
-    success();
+PointStore.prototype.updatePoint = function(p, success) {
+  if (p.idx == -1) {
+    p.idx = this.end++;
+  }
+  ps = this;
+  data = new Object();
+  data[this.baseKey + "_" + p.idx] = JSON.stringify(p);
+  $.ajax({
+    ps: ps,
+    psSuccess: success,
+    url: this._getURL(p.idx, true),
+    data: data,
+    dataType: "jsonp",
+    success: function(data) {
+      this.ps.points.push(p);
+      if (this.psSuccess) {
+        this.psSuccess();
+      }
+    }
+  });
 };
 
 /**
@@ -86,4 +135,25 @@ PointStore.prototype.removePoint = function(p) {
  * @param {function} to be called after deleting is complete
  */
 PointStore.prototype.deletePointStore = function(done) {
+  p = this.points.pop();
+  if (!p) {
+    this.end = 0;
+    if (done)
+      done();
+    return;
+  }
+  data = new Object();
+  data[this.baseKey + "_" + p.idx] = null;
+  ps = this;
+  psDone = done;
+  $.ajax({
+    ps: ps,
+    psDone: done,
+    url: this._getURL(p.idx, true),
+    data: data,
+    dataType: "jsonp",
+    success: function(data) {
+      this.ps.deletePointStore(psDone);
+    }
+  });
 };
