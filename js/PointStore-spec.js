@@ -150,6 +150,14 @@ describe("PointStore", function() {
         });
       });
     });
+
+    it("can search by tag", function() {
+      restaurants = ps.getByTag("restaurant");
+      expect(restaurants).toContain(points[0]);
+      expect(restaurants).toContain(points[3]);
+      expect(restaurants.length).toBe(2);
+    });
+
   });
 });
 

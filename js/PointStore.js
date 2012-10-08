@@ -76,9 +76,12 @@ PointStore.prototype.load = function(success) {
 /**
  * get all points with a certain tag in the top-level tag member.
  *
- * @return {string} (possibly empty) list of points
+ * @return (possibly empty) list of points
  */
 PointStore.prototype.getByTag = function(tag) {
+  return this.points.filter(function(p) {
+    return ($.inArray(tag, p.tags) != -1);
+  });
 };
 
 /**
