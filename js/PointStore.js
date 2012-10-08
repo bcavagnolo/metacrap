@@ -34,6 +34,7 @@ function PointStore(baseKey, load) {
   this.points = [];
   this.baseKey = baseKey;
   this.end = 0;
+  this.deleting = 0;
 }
 
 PointStore.prototype._getURL = function(i, store) {
@@ -62,7 +63,9 @@ PointStore.prototype.load = function(success) {
         }
         return;
       }
-      this.ps.points.push(JSON.parse(data));
+      if (data != "deleted") {
+        this.ps.points.push(JSON.parse(data));
+      }
       this.ps.end++;
       /* Recursion.  Bold.  Hopefully we won't run out of stack. */
       this.ps.load(this.psSuccess);
@@ -127,10 +130,13 @@ PointStore.prototype.updatePoint = function(p, success) {
  * remove a point from the PointStore
  * @param {Point} the point p to remove
  * @param {function} to be called after deleting is complete
+ *
+ * @note: we only soft delete the items.  This ends up leaving holes in the
+ * list.  Yuck.
  */
 PointStore.prototype.removePoint = function(p, done) {
   data = new Object();
-  data[this.baseKey + "_" + p.idx] = null;
+  data[this.baseKey + "_" + p.idx] = "deleted";
   ps = this;
   $.ajax({
     ps: ps,
@@ -152,14 +158,27 @@ PointStore.prototype.removePoint = function(p, done) {
  * @param {function} to be called after deleting is complete
  */
 PointStore.prototype.deletePointStore = function(done) {
-  p = this.points[0];
-  if (!p) {
-    this.end = 0;
-    if (done)
-      done();
-    return;
-  }
-  this.removePoint(p, function(data) {
-    this.ps.deletePointStore(done);
+
+  data = new Object();
+  data[this.baseKey + "_" + this.deleting++] = null;
+  ps = this;
+  $.ajax({
+    ps: ps,
+    psDone: done,
+    url: this._getURL(this.end, true),
+    data: data,
+    dataType: "jsonp",
+    success: function(data) {
+      if (data.status == "did_not_exist") {
+        this.ps.end = 0;
+        this.ps.deleting = 0;
+        this.ps.points = [];
+        if (this.psDone) {
+          this.psDone();
+        }
+        return;
+      }
+      this.ps.deletePointStore(this.psDone);
+    },
   });
 };

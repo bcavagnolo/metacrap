@@ -5,20 +5,21 @@ describe("PointStore", function() {
   beforeEach(function() {
     ps = new PointStore(baseName);
     var loaded = false;
-
-    runs(function () {
-      ps.load(function () {
-        loaded = true;
-      });
-    });
-
-    waitsFor(function () {
-      return loaded;
-    }, "point store to load", 3000);
-  });
-
-  afterEach(function() {
     var deleted = false;
+
+    this.addMatchers({
+      toContainExactlyAll: function(expected) {
+        if (this.actual.length != expected.length) {
+          return false;
+        }
+        for (i=0; i<expected.length; i++) {
+          if (!this.env.contains_(this.actual, expected[i])) {
+            return false;
+          }
+        }
+        return true;
+      }
+    });
 
     runs(function () {
       ps.deletePointStore(function () {
@@ -29,6 +30,16 @@ describe("PointStore", function() {
     waitsFor(function () {
       return deleted;
     }, "point store to delete", 3000);
+
+    runs(function () {
+      ps.load(function () {
+        loaded = true;
+      });
+    });
+
+    waitsFor(function () {
+      return loaded;
+    }, "point store to load", 3000);
   });
 
   it("should start with empty list", function() {
@@ -79,4 +90,66 @@ describe("PointStore", function() {
       expect(ps2.getAll()).toEqual(ps.getAll());
     });
   });
+
+  describe("PointStore multi-point tests", function() {
+    var points = [new Point(0.0, 0.0, "point zero", ["restaurant", "cheap"]),
+                  new Point(137.0, -34.0, "point one", ["bar", "expensive"]),
+                  new Point(0.0, 0.0, "point two", ["shop", "expensive"]),
+                  new Point(0.0, 0.0, "point three", ["restaurant", "fancy"]),
+                  new Point(0.0, 0.0, "point four", ["shop", "chain"])];
+
+    beforeEach(function() {
+      var numLoaded = 0;
+
+      runs(function () {
+        $.each(points, function (i, p) {
+          ps.updatePoint(p, function () {
+            numLoaded++;
+          });
+        });
+      });
+
+      waitsFor(function () {
+        return numLoaded == points.length;
+      }, "points to be updated", 3000);
+    });
+
+    it("contains all elements", function() {
+      expect(ps.getAll()).toContainExactlyAll(points);
+    });
+
+    it("can remove a middle point", function() {
+      p = points.splice(2, 1);
+      removed = false;
+      runs(function () {
+        ps.removePoint(p[0], function() {
+          removed = true;
+        });
+      });
+
+      waitsFor(function () {
+        return removed;
+      }, "item removed successfully", 1000);
+
+      runs(function() {
+        ps2 = new PointStore(baseName);
+        var loaded = false;
+
+        runs(function () {
+          ps2.load(function () {
+            loaded = true;
+          });
+        });
+
+        waitsFor(function () {
+          return loaded;
+        }, "point store 2 to load", 3000);
+
+        runs(function () {
+          expect(ps2.getAll()).toEqual(points);
+        });
+      });
+    });
+  });
 });
+
