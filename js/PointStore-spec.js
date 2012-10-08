@@ -92,14 +92,16 @@ describe("PointStore", function() {
   });
 
   describe("PointStore multi-point tests", function() {
-    var points = [new Point(0.0, 0.0, "point zero", ["restaurant", "cheap"]),
-                  new Point(137.0, -34.0, "point one", ["bar", "expensive"]),
-                  new Point(0.0, 0.0, "point two", ["shop", "expensive"]),
-                  new Point(0.0, 0.0, "point three", ["restaurant", "fancy"]),
-                  new Point(0.0, 0.0, "point four", ["shop", "chain"])];
+    var points;
 
     beforeEach(function() {
       var numLoaded = 0;
+
+      points = [new Point(0.0, 0.0, "point zero", ["restaurant", "cheap"]),
+                new Point(137.0, -34.0, "point one", ["bar", "expensive"]),
+                new Point(0.0, 0.0, "point two", ["shop", "expensive"]),
+                new Point(0.0, 0.0, "point three", ["restaurant", "fancy"]),
+                new Point(0.0, 0.0, "point four", ["shop", "chain"])];
 
       runs(function () {
         $.each(points, function (i, p) {
