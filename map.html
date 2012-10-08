@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>My first Google Map</title>
+    
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <link type="text/css" rel="stylesheet" media="all" href="css/mapstyle.css" />
+
+  </head>
+  <body>
+    <div id="container">
+        <table>
+          <tr>
+            <td>
+            <div id="filterEntities">
+              <form id="entityFilter">
+                  <label for="filterEntities">Filter Entities:</label>
+                  <input type="text" name="filterEntities" id="entity"/>
+                  <input type="submit" id="entitybutton" value="Go!" />
+              </form>
+            </div>
+            <td>
+            <td>
+              <div id="filterTags">
+                <form id="tagFilter">
+                    <label for="filterTags">Filter Tags:</label>
+                    <input type="text" name="filterTags" id="tag"/>
+                    <input type="submit" id="tagbutton" value="Go!" />
+                </form>
+              </div>
+            </td>
+
+          </tr>
+        </table>
+
+          <div id="map">
+          </div>
+  </body>

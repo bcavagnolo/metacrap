@@ -1,0 +1,56 @@
+/*--------------------------------------
+Author: Bharathkumar Gunasekaran
+Email: bharath@ischool.berkeley.edu
+Created: 10/03/2012
+Description: Stylesheet for Project 2
+----------------------------------------*/
+body {
+font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+font-size: small;
+background: #fff;
+background-color:#A9A9A9;
+margin-left: 5%;
+margin-right: 5%;
+border: auto;
+padding: 10px 10px 10px 10px;
+}
+#map {
+width: 100%;
+height: 550px;
+}
+.info {
+width: 250px;
+}
+
+#map { 
+    width: 80%; 
+	height: 550px;
+    margin: auto; 
+	background: white; 
+    box-shadow: 0 0 20px black; 
+	border-radius: 11px;
+}
+#filterTags { border: auto; padding: 20px; }
+
+#filterTags input.search {
+	margin: auto;
+    font-size: 16px;
+    color: #999;
+    padding: 6px;
+    -moz-box-shadow:inset 2px 2px 5px #ccc;
+    box-shadow:inset 2px 2px 5px #ccc;
+    border: 1px solid #b8b8b8;
+}
+#filterTags input.submit {
+    background: url(images/submit.gif) top left no-repeat;
+    width: 67px;
+    height: 32px;
+    border: none;
+    color: #dee4ff;
+    cursor: pointer;
+}
+#filterTags input.submit:hover,
+#filterTags input.submit.hover {
+    background: url(images/submit.gif) bottom left no-repeat;
+}
+
