@@ -160,6 +160,26 @@ describe("PointStore", function() {
       expect(cheap.length).toBe(2);
     });
 
+    it("can search by tag", function() {
+      cheap = ps.getByTag("cheap");
+      expect(cheap).toContain(points[0]);
+      expect(cheap).toContain(points[2]);
+      expect(cheap.length).toBe(2);
+    });
+
+    it("can search by type", function() {
+      restaurants = ps.getByType("restaurant");
+      expect(restaurants).toContain(points[0]);
+      expect(restaurants).toContain(points[3]);
+      expect(restaurants.length).toBe(2);
+    });
+
+    it("returns empty list as necessary", function() {
+      foobars = ps.getByType("foobar");
+      expect(foobars).toEqual([]);
+    });
+
+
   });
 });
 

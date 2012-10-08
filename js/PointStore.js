@@ -89,6 +89,17 @@ PointStore.prototype.getByTag = function(tag) {
 };
 
 /**
+ * get all points of a certain type.
+ *
+ * @return (possibly empty) list of points
+ */
+PointStore.prototype.getByType = function(type) {
+  return this.points.filter(function(p) {
+    return (p.type == type);
+  });
+};
+
+/**
  * get complete list of points
  *
  * @return (possibly empty) list of points
