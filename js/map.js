@@ -9,6 +9,11 @@ Description: Javascript for Project 2
 
 var map, geocoder, marker, infowindow, entity, tag;
 
+  var points = [new Point([0.0, 0.0], "Vital Vittles", "restaurant", ["cheap", "quiet"]),
+              new Point([137.0, -34.0], "La Bedaine", "restaurant", ["costly", "awesome"]),
+              new Point([0.0, 0.0], "Greek Theatre", "nightLife", ["rocking"])
+             ];
+
 var data = { "entities" : [
 							{ "type" : "restaurant", "values": [
 							      									{ "name": "Vital Vittles", "posn": [37.8557619, -122.28803370000003], "tags" :["cheap", "quiet"] },
