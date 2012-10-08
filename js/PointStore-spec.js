@@ -47,7 +47,7 @@ describe("PointStore", function() {
   });
 
   it("should store items", function() {
-    var stored = new Point(0.0, 0.0, "test1", []);
+    var stored = new Point([0.0, 0.0], "test1", "type", []);
     var retrieved = null;
     var flag = false;
 
@@ -70,7 +70,7 @@ describe("PointStore", function() {
   });
 
   it("should actually persist items", function() {
-    var point = new Point(0.0, 0.0, "some other name", []);
+    var point = new Point([0.0, 0.0], "some other name", "type", []);
     var ps2 = new PointStore(baseName);
     var done = false;
 
@@ -97,11 +97,11 @@ describe("PointStore", function() {
     beforeEach(function() {
       var numLoaded = 0;
 
-      points = [new Point(0.0, 0.0, "point zero", ["restaurant", "cheap"]),
-                new Point(137.0, -34.0, "point one", ["bar", "expensive"]),
-                new Point(0.0, 0.0, "point two", ["shop", "expensive"]),
-                new Point(0.0, 0.0, "point three", ["restaurant", "fancy"]),
-                new Point(0.0, 0.0, "point four", ["shop", "chain"])];
+      points = [new Point([0.0, 0.0], "point zero", "restaurant", ["yummy", "cheap"]),
+                new Point([137.0, -34.0], "point one", "bar", ["fancy", "expensive"]),
+                new Point([0.0, 0.0], "point two", "shop", ["five stars", "cheap"]),
+                new Point([0.0, 0.0], "point three", "restaurant", ["yucky", "fancy"]),
+                new Point([0.0, 0.0], "point four", "shop", ["divy", "chain"])];
 
       runs(function () {
         $.each(points, function (i, p) {
@@ -154,10 +154,10 @@ describe("PointStore", function() {
     });
 
     it("can search by tag", function() {
-      restaurants = ps.getByTag("restaurant");
-      expect(restaurants).toContain(points[0]);
-      expect(restaurants).toContain(points[3]);
-      expect(restaurants.length).toBe(2);
+      cheap = ps.getByTag("cheap");
+      expect(cheap).toContain(points[0]);
+      expect(cheap).toContain(points[2]);
+      expect(cheap.length).toBe(2);
     });
 
   });

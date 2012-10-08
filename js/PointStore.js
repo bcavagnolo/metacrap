@@ -2,11 +2,15 @@ var openKVURL = "http://riyadh.cusp.berkeley.edu/";
 
 /**
  * Create a Point suitable to be stored in the PointStore
+ * @param {Array} array containing lat and lon as floats
+ * @param {string} name of the point (e.g., "Vital Vittles")
+ * @param {string} the type of the point (e.g., restaurant)
+ * @param {Array} array of tags
  */
-function Point(lat, lon, name, tags) {
-  this.lat = lat;
-  this.lon = lon;
+function Point(posn, name, type, tags) {
+  this.posn = posn;
   this.name = name;
+  this.type = type;
   this.tags = tags;
 
   /* the following members are used internally by PointStore and should not be
