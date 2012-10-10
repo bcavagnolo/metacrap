@@ -1,4 +1,3 @@
-var openKVURL = "http://riyadh.cusp.berkeley.edu/";
 
 /**
  * Create a Point suitable to be stored in the PointStore
@@ -28,24 +27,28 @@ function Point(posn, name, type, tags) {
  * space to form nameSpace_n.  All values with keys of the form nameSpace_n are
  * loaded until a 404 is returned.
  *
- * @param {string} a [hopefully] unique nameSpace
+ * @param {Object} key-value pairs specifying the following options:
+ * <ul>
+ * <li>openKVURL: url of openkv server to use as back end</li>
+ * <li>nameSpace: [hopefully] unique nameSpace for use on openKV</li>
+ * </ul>
  *
  * NOTE: This storage scheme suffers from ample problems that a conventional DB
  * resolves including concurrency issues between clients, no support for unique
  * base names, terrible search algorithms, etc.
  */
-function PointStore(nameSpace) {
+function PointStore(options) {
   this.points = [];
-  this.nameSpace = nameSpace;
+  this.options = options;
   this.end = 0;
   this.deleting = 0;
 }
 
 PointStore.prototype._getURL = function(i, store) {
   if (store)
-    return openKVURL + 'store/';
+    return this.options.openKVURL + 'store/';
   else
-    return openKVURL + this.nameSpace + "_" + i;
+    return this.options.openKVURL + this.options.nameSpace + "_" + i;
 }
 
 /**
@@ -128,7 +131,7 @@ PointStore.prototype.updatePoint = function(p, success) {
   }
   ps = this;
   data = new Object();
-  data[this.nameSpace + "_" + p.idx] = JSON.stringify(p);
+  data[this.options.nameSpace + "_" + p.idx] = JSON.stringify(p);
   $.ajax({
     ps: ps,
     psSuccess: success,
@@ -154,7 +157,7 @@ PointStore.prototype.updatePoint = function(p, success) {
  */
 PointStore.prototype.removePoint = function(p, done) {
   data = new Object();
-  data[this.nameSpace + "_" + p.idx] = "deleted";
+  data[this.options.nameSpace + "_" + p.idx] = "deleted";
   ps = this;
   $.ajax({
     ps: ps,
@@ -178,7 +181,7 @@ PointStore.prototype.removePoint = function(p, done) {
 PointStore.prototype.deletePointStore = function(done) {
 
   data = new Object();
-  data[this.nameSpace + "_" + this.deleting++] = null;
+  data[this.options.nameSpace + "_" + this.deleting++] = null;
   ps = this;
   $.ajax({
     ps: ps,

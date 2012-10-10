@@ -1,9 +1,12 @@
 describe("PointStore", function() {
   var ps;
-  var baseName = "surelyThisKeyDoesNotExist24142909"
+  var options = {
+    nameSpace: "surelyThisKeyDoesNotExist24142909",
+    openKVURL: "http://riyadh.cusp.berkeley.edu/",
+  };
 
   beforeEach(function() {
-    ps = new PointStore(baseName);
+    ps = new PointStore(options);
     var loaded = false;
     var deleted = false;
 
@@ -71,7 +74,7 @@ describe("PointStore", function() {
 
   it("should actually persist items", function() {
     var point = new Point([0.0, 0.0], "some other name", "type", []);
-    var ps2 = new PointStore(baseName);
+    var ps2 = new PointStore(options);
     var done = false;
 
     runs(function () {
@@ -134,7 +137,7 @@ describe("PointStore", function() {
       }, "item removed successfully", 1000);
 
       runs(function() {
-        ps2 = new PointStore(baseName);
+        ps2 = new PointStore(options);
         var loaded = false;
 
         runs(function () {
