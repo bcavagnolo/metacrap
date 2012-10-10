@@ -7,7 +7,7 @@ Description: Javascript for Project 2
 
 ( function(){
 
-	var map, geocoder, marker, infowindow, entity, tag;
+	var map, geocoder, marker, infowindow, entity, tag, newTag;
 	var markersArray = [];
 	var psx;
 
@@ -32,27 +32,22 @@ Description: Javascript for Project 2
 		var tagPoints = [];
 		var filterPoints = [];
 		psx.load(function() {
-				 console.log("loaded points");
-				 console.log(psx);
+;
 				 tagPoints = psx.getAll();
-				 console.log(tagPoints);
+
 				 placeMarkers(tagPoints);
-				 console.log(markersArray);
+
 		});
 
 		$("#tagbutton").click(function() {
 			tag = document.getElementById('tag').value;
-			console.log(tag);
 			filterPoints = psx.getByTag(tag);
-			console.log(filterPoints);
 			 for (i in filterPoints) {
-			 	console.log(i)
 			 	placeMarkers(filterPoints);
 			 }
 		});
 
 		google.maps.event.addListener(map, 'click', function(e) {
-					console.log(e.latLng)
 		          placeMarker(e.latLng);
 		        });
 
@@ -68,7 +63,6 @@ Description: Javascript for Project 2
 		for (var i = 0; i < entity.length; i++) {
 			location.push(new google.maps.LatLng(entity[i].posn[0], entity[i].posn[1]));
 		};
-		console.log(location);
 		for (var j = 0; j < location.length; j++) {
 			placeMarker(location[j]);
 		};
@@ -76,15 +70,19 @@ Description: Javascript for Project 2
 			var name = psx.points[k].name;
 	        var details = '<div id="info">' +
 						'<h2>'+name+'</h2>';
+			details += '<ul id="taglist">'
 				for (m in psx.points[k].tags)
 				{
-					details += '<p>'+psx.points[k].tags[m]+'</p>';
+					details += '<li class="tag close'+m+'"><span class="tags">'+psx.points[k].tags[m]+'</span><span class="close close'+i+'">x</span></li>';
 				}				
-			details += '</div';
-
-			displayContent(markersArray[k], details);
+			details += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/><input type="submit" id="addTagButton"/></div></div>';
+			displayContent(markersArray[k], details, entity);
 
 		};
+
+
+
+
 	}
 
 	function placeMarker(position) {
@@ -105,14 +103,25 @@ Description: Javascript for Project 2
 		  }
       }
 
-    function displayContent(mark, details) {
+    function displayContent(mark, details, entity) {
 		  var infowindow = new google.maps.InfoWindow(
 		      { content: details,
 		      });
 		  google.maps.event.addListener(mark, 'click', function() {
 		    infowindow.open(map,mark);
- 			 });	
+
+				$('#addTagButton').live("click", function(event){
+					var newTag = $("#addtag").val();
+					console.log(newTag);
+					console.log(psx);
+					console.log(entity);
+				    });
+
+
+ 			 });
+
       }
+
 
 
 

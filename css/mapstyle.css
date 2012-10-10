@@ -54,3 +54,39 @@ width: 250px;
     background: url(images/submit.gif) bottom left no-repeat;
 }
 
+.tag
+{
+    margin: 5px;
+    width: 50px;
+    display: inline-block;  
+}
+
+.tags, .close
+{
+    border: auto;
+    padding: 1px 1px 1px 1px;
+    color: #002E63;
+    background: #BCD4E6;
+}
+
+.tags:hover, .close:hover
+{
+    background: #F0EAD6;
+    cursor: pointer;
+}
+
+.tags
+{
+    border-radius: 3px 0px 0px 3px;
+}
+
+.close
+{
+    border-radius: 0px 3px 3px 0px;
+}
+
+.idInput
+{
+    display: none;
+}
+
