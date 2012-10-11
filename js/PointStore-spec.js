@@ -243,6 +243,43 @@ describe("PointStore", function() {
         });
       });
     });
+
+    it("should not store extra crap", function() {
+      updated = false;
+      p = points[2];
+      p.extraCrap = "extra crap";
+      p.MoreExtraCrap = {crap1: "c1", crap2: "c2"};
+      runs(function () {
+        ps.updatePoint(p, function() {
+          updated = true;
+        });
+      });
+
+      waitsFor(function () {
+        return updated;
+      }, "point updated successfully", 1000);
+
+      runs(function() {
+        ps2 = new PointStore(options);
+        var loaded = false;
+
+        runs(function () {
+          ps2.load(function () {
+            loaded = true;
+          });
+        });
+
+        waitsFor(function () {
+          return loaded;
+        }, "point store 2 to load", 3000);
+
+        runs(function () {
+          var p = ps2.getAll()[2];
+          expect(p.extraCrap).toBe(undefined);
+          expect(p.moreExtraCrap).toBe(undefined);
+        });
+      });
+    });
   });
 });
 

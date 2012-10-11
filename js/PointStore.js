@@ -186,6 +186,9 @@ PointStore.prototype.length = function() {
  * If the point does not exist in the PointStore, it will be created.
  * @param {Point} the point to update
  * @param {function} to call after the save succeeds (optional)
+ *
+ * @note that only the known members of the Point class will be stored.  Any
+ * members added by the user will be dropped.
  */
 PointStore.prototype.updatePoint = function(p, success) {
   if (p.idx == -1) {
@@ -193,9 +196,14 @@ PointStore.prototype.updatePoint = function(p, success) {
   } else {
     this.points.remove('idx', p.idx);
   }
-  ps = this;
-  data = new Object();
-  data[this.options.nameSpace + "_" + p.idx] = JSON.stringify(p);
+  var pRef = new Point();
+  var keys = Object.keys(pRef);
+  for (var i=0; i<keys.length; i++) {
+    pRef[keys[i]] = p[keys[i]];
+  }
+  var ps = this;
+  var data = new Object();
+  data[this.options.nameSpace + "_" + p.idx] = JSON.stringify(pRef);
   $.ajax({
     ps: ps,
     psSuccess: success,
@@ -203,7 +211,7 @@ PointStore.prototype.updatePoint = function(p, success) {
     data: data,
     dataType: "jsonp",
     success: function(data) {
-      this.ps.points.add(p);
+      this.ps.points.add(pRef);
       if (this.psSuccess) {
         this.psSuccess();
       }
