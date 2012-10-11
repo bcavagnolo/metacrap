@@ -1,4 +1,3 @@
-
 /**
  * Create a Point suitable to be stored in the PointStore
  * @param {Array} array containing lat and lon as floats
@@ -27,18 +26,63 @@ function Point(posn, name, type, tags) {
  * space to form nameSpace_n.  All values with keys of the form nameSpace_n are
  * loaded until a 404 is returned.
  *
+ * Internally, the list of points is stored as a List.js list so that we can
+ * ultimately use its fuzzy searching capability to battle metacrap.
+ *
  * @param {Object} key-value pairs specifying the following options:
  * <ul>
  * <li>openKVURL: url of openkv server to use as back end</li>
  * <li>nameSpace: [hopefully] unique nameSpace for use on openKV</li>
+ * <li>listID: the html element id where list items can be persisted</li>
  * </ul>
  *
  * NOTE: This storage scheme suffers from ample problems that a conventional DB
  * resolves including concurrency issues between clients, no support for unique
  * base names, terrible search algorithms, etc.
+ *
+ * NOTE: For our purposes, we want to leave the gory html details up to the
+ * user.  But gutting list.js to eliminate the listID proved to be too
+ * ambitious for this project.  So we require it.
  */
 function PointStore(options) {
-  this.points = [];
+
+  /* It took me a while to figure this out because list.js "templates" do not
+   * seem to be documented. So let me explain it in a bit of detail.  This
+   * class is responsible for showing and hiding elements as the search terms
+   * change.  The html elements are consistently referred to as "items" and the
+   * data that is used to populate the "item" is referred to as a "value".
+   * "items" must be "created" before they get populated.  For our purposes, we
+   * just want the user to pass us functions to create, show, and hide items.
+   * That is, we don't want to mess with any html, we let them do that.  So in
+   * this template implementation, we don't care about the "items", we only
+   * care about the "values".
+   */
+  List.prototype.templateEngines.external = function(list, settings) {
+
+    this.set = function(item, values) {
+    };
+
+    this.show = function(item) {
+    };
+
+    this.hide = function(item) {
+    };
+
+    this.clear = function() {
+    };
+
+    this.remove = function(item) {
+    };
+  };
+
+  this.listOptions = {
+    /* this is the hard-coded list of members of the Point structure to be
+     * used in the fuzzy matching.
+     */
+    valueNames: [ 'name', 'type', 'tags' ],
+    engine:"external",
+  };
+  this.points = new List(options.listID, this.listOptions);
   this.options = options;
   this.end = 0;
   this.deleting = 0;
@@ -71,7 +115,7 @@ PointStore.prototype.load = function(success) {
         return;
       }
       if (data != "deleted") {
-        this.ps.points.push(JSON.parse(data));
+        this.ps.points.add(JSON.parse(data));
       }
       this.ps.end++;
       /* Recursion.  Bold.  Hopefully we won't run out of stack. */
@@ -86,7 +130,7 @@ PointStore.prototype.load = function(success) {
  * @return (possibly empty) list of points
  */
 PointStore.prototype.getByTag = function(tag) {
-  return this.points.filter(function(p) {
+  return this.points.values().filter(function(p) {
     return ($.inArray(tag, p.tags) != -1);
   });
 };
@@ -97,7 +141,7 @@ PointStore.prototype.getByTag = function(tag) {
  * @return (possibly empty) list of points
  */
 PointStore.prototype.getByType = function(type) {
-  return this.points.filter(function(p) {
+  return this.points.values().filter(function(p) {
     return (p.type == type);
   });
 };
@@ -108,14 +152,14 @@ PointStore.prototype.getByType = function(type) {
  * @return (possibly empty) list of points
  */
 PointStore.prototype.getAll = function() {
-  return this.points;
+  return this.points.values();
 };
 
 /**
  * @return number of points contained in the PointStore
  */
 PointStore.prototype.length = function() {
-  return this.points.length;
+  return this.points.values().length;
 };
 
 /**
@@ -128,6 +172,8 @@ PointStore.prototype.length = function() {
 PointStore.prototype.updatePoint = function(p, success) {
   if (p.idx == -1) {
     p.idx = this.end++;
+  } else {
+    this.points.remove(idx, p.idx);
   }
   ps = this;
   data = new Object();
@@ -139,7 +185,7 @@ PointStore.prototype.updatePoint = function(p, success) {
     data: data,
     dataType: "jsonp",
     success: function(data) {
-      this.ps.points.push(p);
+      this.ps.points.add(p);
       if (this.psSuccess) {
         this.psSuccess();
       }
@@ -167,7 +213,7 @@ PointStore.prototype.removePoint = function(p, done) {
     data: data,
     dataType: "jsonp",
     success: function(data) {
-      this.ps.points.splice(this.ps.points.indexOf(this.p), 1);
+      this.ps.points.remove('idx', this.p.idx);
       if (this.psDone)
         this.psDone();
     }
@@ -193,7 +239,7 @@ PointStore.prototype.deletePointStore = function(done) {
       if (data.status == "did_not_exist") {
         this.ps.end = 0;
         this.ps.deleting = 0;
-        this.ps.points = [];
+        this.ps.points = new List(this.ps.options.listID, this.ps.listOptions);
         if (this.psDone) {
           this.psDone();
         }

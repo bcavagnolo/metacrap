@@ -3,6 +3,7 @@ describe("PointStore", function() {
   var options = {
     nameSpace: "surelyThisKeyDoesNotExist24142909",
     openKVURL: "http://riyadh.cusp.berkeley.edu/",
+    listID: 'point-store-list',
   };
 
   beforeEach(function() {

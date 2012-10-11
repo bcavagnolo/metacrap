@@ -147,6 +147,15 @@ var List = function(id, options, values) {
         }
     };
 
+    /* return an array of values associated with the list items
+     */
+    this.values = function() {
+      values = [];
+      for (var i=0; i<this.items.length; i++) {
+        values.push(this.items[i].values());
+      }
+      return values;
+    }
 
     /*
     * Add object to list
