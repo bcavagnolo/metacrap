@@ -191,7 +191,7 @@ PointStore.prototype.updatePoint = function(p, success) {
   if (p.idx == -1) {
     p.idx = this.end++;
   } else {
-    this.points.remove(idx, p.idx);
+    this.points.remove('idx', p.idx);
   }
   ps = this;
   data = new Object();

@@ -164,13 +164,6 @@ describe("PointStore", function() {
       expect(cheap.length).toBe(2);
     });
 
-    it("can search by tag", function() {
-      cheap = ps.getByTag("cheap");
-      expect(cheap).toContain(points[0]);
-      expect(cheap).toContain(points[2]);
-      expect(cheap.length).toBe(2);
-    });
-
     it("can search by type", function() {
       restaurants = ps.getByType("restaurant");
       expect(restaurants).toContain(points[0]);
@@ -183,7 +176,73 @@ describe("PointStore", function() {
       expect(foobars).toEqual([]);
     });
 
+    it("can add a point", function() {
+      added = false;
+      p = new Point([0.0, 0.0], "point five", "shop", ["boutique"]);
+      points.push(p);
+      runs(function () {
+        ps.updatePoint(p, function() {
+          added = true;
+        });
+      });
 
+      waitsFor(function () {
+        return added;
+      }, "point added successfully", 1000);
+
+      runs(function() {
+        ps2 = new PointStore(options);
+        var loaded = false;
+
+        runs(function () {
+          ps2.load(function () {
+            loaded = true;
+          });
+        });
+
+        waitsFor(function () {
+          return loaded;
+        }, "point store 2 to load", 3000);
+
+        runs(function () {
+          expect(ps2.getAll()).toEqual(points);
+        });
+      });
+    });
+
+    it("can update a point", function() {
+      updated = false;
+      p = points[2];
+      p.tags.push("student discount");
+      runs(function () {
+        ps.updatePoint(p, function() {
+          updated = true;
+        });
+      });
+
+      waitsFor(function () {
+        return updated;
+      }, "point updated successfully", 1000);
+
+      runs(function() {
+        ps2 = new PointStore(options);
+        var loaded = false;
+
+        runs(function () {
+          ps2.load(function () {
+            loaded = true;
+          });
+        });
+
+        waitsFor(function () {
+          return loaded;
+        }, "point store 2 to load", 3000);
+
+        runs(function () {
+          expect(ps2.getAll()).toEqual(points);
+        });
+      });
+    });
   });
 });
 
