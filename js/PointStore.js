@@ -34,6 +34,9 @@ function Point(posn, name, type, tags) {
  * <li>openKVURL: url of openkv server to use as back end</li>
  * <li>nameSpace: [hopefully] unique nameSpace for use on openKV</li>
  * <li>listID: the html element id where list items can be persisted</li>
+ * <li>createPointDisplay: callback that creates the display for a point</li>
+ * <li>showPoint: callback that shows a point</li>
+ * <li>hidePoint: callback that hides a point</li>
  * </ul>
  *
  * NOTE: This storage scheme suffers from ample problems that a conventional DB
@@ -60,12 +63,18 @@ function PointStore(options) {
   List.prototype.templateEngines.external = function(list, settings) {
 
     this.set = function(item, values) {
+      if (options.createPointDisplay)
+        options.createPointDisplay(values);
     };
 
     this.show = function(item) {
+      if (options.showPoint)
+        options.showPoint(item.values());
     };
 
     this.hide = function(item) {
+      if (options.hidePoint)
+        options.hidePoint(item.values());
     };
 
     this.clear = function() {
@@ -81,8 +90,17 @@ function PointStore(options) {
      */
     valueNames: [ 'name', 'type', 'tags' ],
     engine:"external",
+    plugins: [
+      [ 'fuzzySearch' ]
+    ],
   };
-  this.points = new List(options.listID, this.listOptions);
+  var points = new List(options.listID, this.listOptions);
+  this.points = points;
+  if (options.searchBoxID) {
+    $(options.searchBoxID).keyup(function() {
+      points.fuzzySearch($(this).val());
+    });
+  }
   this.options = options;
   this.end = 0;
   this.deleting = 0;
