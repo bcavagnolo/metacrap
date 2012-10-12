@@ -15,6 +15,7 @@ Description: Javascript for Project 2
 	window.onload = function(){ 
 
 		psx = new PointStore("projectTwoTestPoints");
+		console.log(psx);
 		var fix = new google.maps.LatLng(37.8717, -122.2728)
 		var options = {
 					center: fix,
@@ -32,10 +33,11 @@ Description: Javascript for Project 2
 		var tagPoints = [];
 		var filterPoints = [];
 		psx.load(function() {
-;
-				 tagPoints = psx.getAll();
 
+				 tagPoints = psx.getAll();
+				 console.log(tagPoints);
 				 placeMarkers(tagPoints);
+
 
 		});
 
@@ -59,39 +61,53 @@ Description: Javascript for Project 2
 
 		clearMarkers();
 	
-		var location = [];
 		for (var i = 0; i < entity.length; i++) {
-			location.push(new google.maps.LatLng(entity[i].posn[0], entity[i].posn[1]));
-		};
-		for (var j = 0; j < location.length; j++) {
-			placeMarker(location[j]);
-		};
-		for ( k in markersArray){
-			var name = psx.points[k].name;
-	        var details = '<div id="info">' +
-						'<h2>'+name+'</h2>';
-			details += '<ul id="taglist">'
-				for (m in psx.points[k].tags)
-				{
-					details += '<li class="tag close'+m+'"><span class="tags">'+psx.points[k].tags[m]+'</span><span class="close close'+i+'">x</span></li>';
-				}				
-			details += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/><input type="submit" id="addTagButton"/></div></div>';
-			displayContent(markersArray[k], details, entity);
 
+			entity[i].glatlng = new google.maps.LatLng(entity[i].posn[0], entity[i].posn[1]);
+			placeMarker(entity[i]);
+			decorateMarker(entity[i]);
+			//location.push(new google.maps.LatLng(entity[i].posn[0], entity[i].posn[1]));
 		};
-
 
 
 
 	}
 
-	function placeMarker(position) {
+	function  decorateMarker(a) {
+			var name = a.name;
+	        var details = '<div id="info">' +
+						'<h2>'+name+'</h2>';
+			details += '<ul id="taglist">'
+				for (m in a.tags)
+				{
+					details += '<li class="tag close'+m+'"><span class="tags">'+a.tags[m]+'</span><span class="close close'+i+'">x</span></li>';
+				}				
+			details += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/><input type="submit" id="addTagButton"/></div></div>';
+			 var infowindow = new google.maps.InfoWindow(
+		      { content: details,
+		      });
+
+
+      }
+
+	function placeMarker(a){
           marker = new google.maps.Marker({
-          position: position,
+          position: a.glatlng,
           map: map,
           title: 'Add info to point'
         });
-        markersArray.push(marker);
+		    google.maps.event.addListener(marker, 'click', function() {
+		    infowindow.open(map,marker);
+
+				$('#addTagButton').live("click", function(event){
+					var newTag = $("#addtag").val();
+					console.log(newTag);
+					console.log(psx);
+					console.log(entity);
+				    });
+
+
+ 			 });
       }
 
 	function clearMarkers() {
@@ -103,24 +119,6 @@ Description: Javascript for Project 2
 		  }
       }
 
-    function displayContent(mark, details, entity) {
-		  var infowindow = new google.maps.InfoWindow(
-		      { content: details,
-		      });
-		  google.maps.event.addListener(mark, 'click', function() {
-		    infowindow.open(map,mark);
-
-				$('#addTagButton').live("click", function(event){
-					var newTag = $("#addtag").val();
-					console.log(newTag);
-					console.log(psx);
-					console.log(entity);
-				    });
-
-
- 			 });
-
-      }
 
 
 
