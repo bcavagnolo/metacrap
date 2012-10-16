@@ -8,6 +8,7 @@ Description: Javascript for Project 2
 ( function(){
 
 	var map, geocoder, marker, infowindow, entity, tag, newTag;
+	var listenerHandle;
 	var markersArray = [];
 	var psx;
 	var opt = {
@@ -21,7 +22,7 @@ Description: Javascript for Project 2
   };
 
   var infowindow = new google.maps.InfoWindow();
-  var infowindow1 = new google.maps.InfoWindow();
+
 
 
 
@@ -46,19 +47,16 @@ Description: Javascript for Project 2
 
 		psx.load(function() {
 
-/*				 tagPoints = psx.getAll();
-        			 console.log(tagPoints);*/
-		google.maps.event.addListener(map, 'click', function(e) {
-				var newPoint = new Point();
-		        placeMarker(newPoint,e.latLng);
-
-
-
+		listenerHandle = google.maps.event.addListener(map, 'click', function(e) {
+				
+		        placeMarker(e.latLng);
 
 		        });
 
-
+		
 		});
+
+		
 
 
 	}
@@ -93,52 +91,44 @@ Description: Javascript for Project 2
 
 
       function showMarker(point){
- 			console.log("showMarker:");
-			console.log(point);
       	point.Gmarker.setMap(map);
-
       };
 
       function hideMarker(point){
-      		console.log("hideMarker:");
-			console.log(point);
       	point.Gmarker.setMap(null);
-
       };
 
-	function placeMarker(b,a){
-		  console.log("bharath1")
-		  console.log(b)
-		  console.log(a)
-			console.log("bharath2")
+	function placeMarker(a){
+		var b = new Point();
           marker = new google.maps.Marker({
           position: a,
           map: map,
           title: 'Add info to point'
         });
         b.Gmarker = marker;
-        b.posn = a
-		    //google.maps.event.addListener(marker, 'click', function() {
+        b.posn = [];
+        b.posn.push(a.Xa);
+        b.posn.push(a.Ya);
 
-		  
+		    var contentForm = '<label>Name:</label><input type="text" id="addNewName"/><br><label>Add Entity Type:</label><input type="text" id="addNewEntity"/><br><label>Add tag:</label><input type="text" id="addNewTag"/><br><input type="submit" id="addTagForm"/>';
+		    if (infowindow)
+		    {
+		    	infowindow.close();
+		    }
 
-		    var contentForm = '<label>Name:</label><input type="text" id="addNewName"/><br><label>Add Entity Type:</label><input type="text" id="addNewEntity"/><label>Add tag:</label><input type="text" id="addNewTag"/><input type="submit" id="addTagForm"/>';
-		    infowindow1.setContent(contentForm); 			
-		    infowindow1.open(map,marker);
+		    infowindow.setContent(contentForm); 			
+		    infowindow.open(map,marker);
 
 				$('#addTagForm').live("click", function(event){
-					b.name = $("#addNewTag").val();
-					//newPoint.name = $("#entityName").val();
-					//newPoint.type = $("#entityType").val();
-					//tagss.push($("#entityType").val();
-					//newPoint.tag.push($("#mapTag").val());
-					  
+					b.name = $("#addNewName").val();
+					b.type = $("#addNewEntity").val();
+					b.tags = [];
+					b.tags.push($("#addNewTag").val());
 					console.log(b);
+					psx.updatePoint(b);
+					infowindow.close();
 				    });
 					  
-
-
- 			 //});
       }
  
 
@@ -147,3 +137,4 @@ Description: Javascript for Project 2
 
 
 })();
+
