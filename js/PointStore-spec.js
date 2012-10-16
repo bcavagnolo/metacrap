@@ -10,6 +10,7 @@ describe("PointStore", function() {
     ps = new PointStore(options);
     var loaded = false;
     var deleted = false;
+    
 
     this.addMatchers({
       toContainExactlyAll: function(expected) {

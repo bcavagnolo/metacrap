@@ -34,7 +34,7 @@ function Point(posn, name, type, tags) {
  * <li>openKVURL: url of openkv server to use as back end</li>
  * <li>nameSpace: [hopefully] unique nameSpace for use on openKV</li>
  * <li>listID: the html element id where list items can be persisted</li>
- * <li>createPointDisplay: callback that creates the display for a point</li>
+ * <li>createPointDisplay: callback that creates the display for a point</li> 
  * <li>showPoint: callback that shows a point</li>
  * <li>hidePoint: callback that hides a point</li>
  * </ul>
@@ -97,7 +97,10 @@ function PointStore(options) {
   var points = new List(options.listID, this.listOptions);
   this.points = points;
   if (options.searchBoxID) {
-    $(options.searchBoxID).keyup(function() {
+    console.log("the entire list");
+    console.log($('#'+ options.searchBoxID));
+    $('#'+ options.searchBoxID).keyup(function() {
+         console.log(options.searchBoxID);
       points.fuzzySearch($(this).val());
     });
   }
