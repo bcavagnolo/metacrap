@@ -60,16 +60,6 @@ Description: Javascript for Project 2
 
 
 			point.glatlng = new google.maps.LatLng(point.posn[0], point.posn[1]);
-		    
-		    var contentString = '<div id="info">' +
-						'<h2>'+point.name+'</h2>';
-			contentString += '<ul id="taglist">'
-				for (m in point.tags)
-				{
-					contentString += '<li class="tag close'+m+'"><span class="tags">'+point.tags[m]+'</span><span class="close close'+m+'">x</span></li>';
-				}				
-			contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/></div><div><input type="submit" id="addTagButton"/></div></div>';
-
 		    var marker = new google.maps.Marker({
 		        position: point.glatlng,
 		        map: null,
@@ -81,18 +71,24 @@ Description: Javascript for Project 2
 		    // added listeners to each of the markers for the user to click. The users will be able to delete the tags one by one.
 
 		    google.maps.event.addListener(marker, 'click', function() {
-		        infowindow.setContent(contentString); 
-		        infowindow.open(map,marker);
-		        $(".close").live("click", function(event){
-				    var cls = $(this).attr('class');
-				    var index;
-				    for (var i = 0; i < len; i++)
-				        {
-				            if (cls.indexOf('close' + i)>=0)
-				                index = i;
-				        }
-				    $('.close' + index).remove();
-				    point.tags.splice(index,1);
+				var contentString = '<div id="info">' +
+					'<h2>'+point.name+'</h2>';
+				contentString += '<ul id="taglist">'
+				for (m in point.tags)
+				{
+					contentString += '<li class="tag" id="tag_' + point.idx + '_' + m + '">' +
+						'<span class=tags id="content-tag_' + point.idx + '_' + m + '">'+point.tags[m]+'</span>' +
+						'<span class="close close' + point.idx + '" id="close-tag_' + point.idx + '_' + m + '">x</span></li>';
+				}
+				contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/></div><div><input type="submit" id="addTagButton"/></div></div>';
+				infowindow.setContent(contentString);
+				infowindow.open(map,marker);
+				$(".close" + point.idx).live("click", function(event){
+					var id = this.id.split('-')[1];
+					var tag = $('#content-' + id).html();
+					i = point.tags.indexOf(tag);
+					point.tags.splice(i,1);
+					$('#' + id).remove();
 				});
 
 		     //This is used for the user to add new tags. The new tags added should also be delatable. 
