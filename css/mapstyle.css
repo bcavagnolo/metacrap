@@ -4,6 +4,8 @@ Email: bharath@ischool.berkeley.edu
 Created: 10/03/2012
 Description: Stylesheet for Project 2
 ----------------------------------------*/
+
+
 body {
 font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
 font-size: small;
@@ -14,12 +16,15 @@ margin-right: 5%;
 border: auto;
 padding: 10px 10px 10px 10px;
 }
-#map {
-width: 100%;
-height: 550px;
-}
+
+
 .info {
-width: 300px;
+
+    height:200px;
+    width: 400px;
+    font-size: auto;
+    padding: 10px 10px 10px 10px;
+
 }
 
 #map { 
@@ -56,14 +61,16 @@ width: 300px;
 
 .tag
 {
-    margin: 5px;
+    border: 1px black;
+    margin: 10px;
     width: 50px;
     display: inline-block;  
 }
 
 .tags, .close
 {
-    border: auto;
+
+    border: 5px;
     padding: 1px 1px 1px 1px;
     color: #002E63;
     background: #BCD4E6;
@@ -77,16 +84,13 @@ width: 300px;
 
 .tags
 {
+    border: 1px black;
     border-radius: 3px 0px 0px 3px;
+    border: 2px black;
 }
 
 .close
 {
     border-radius: 0px 3px 3px 0px;
-}
-
-.idInput
-{
-    display: none;
 }
 

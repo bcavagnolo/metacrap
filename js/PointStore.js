@@ -100,7 +100,7 @@ function PointStore(options) {
     console.log("the entire list");
     console.log($('#'+ options.searchBoxID));
     $('#'+ options.searchBoxID).keyup(function() {
-         console.log(options.searchBoxID);
+         //console.log(options.searchBoxID);
       points.fuzzySearch($(this).val());
     });
   }

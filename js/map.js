@@ -7,9 +7,11 @@ Description: Javascript for Project 2
 
 ( function(){
 
-	var map, geocoder, marker, infowindow, entity, tag, newTag;
+
+	//declare the global variables
+	var map, marker, infowindow;
 	var listenerHandle;
-	var markersArray = [];
+	var len;
 	var psx;
 	var opt = {
     nameSpace: "projectTwoTestPoints",
@@ -19,18 +21,15 @@ Description: Javascript for Project 2
     showPoint: showMarker,
     hidePoint: hideMarker,
     searchBoxID: 'tag',
-  };
-
-  var infowindow = new google.maps.InfoWindow();
-
-
-
-
+	};
+	var infowindow = new google.maps.InfoWindow();
 
 	window.onload = function(){ 
 
+		//load the Pointstore
 		psx = new PointStore(opt);
-		console.log(psx);
+		
+		//fix the map to Berkeley area
 		var fix = new google.maps.LatLng(37.8717, -122.2728)
 		var options = {
 					center: fix,
@@ -42,25 +41,20 @@ Description: Javascript for Project 2
 					},
 					streetViewControl: true,
 			};
+
+		//
 		map = new google.maps.Map(document.getElementById('map'), options);
-		
 
 		psx.load(function() {
-
-		listenerHandle = google.maps.event.addListener(map, 'click', function(e) {
-				
+		google.maps.event.addListener(map, 'click', function(e) {
 		        placeMarker(e.latLng);
-
 		        });
-
-		
 		});
-
-		
-
-
 	}
 
+	/**
+	 * The markers get created when the page loads initially. 
+	 */
 
 		function createMarker(point) {
 
@@ -74,7 +68,7 @@ Description: Javascript for Project 2
 				{
 					contentString += '<li class="tag close'+m+'"><span class="tags">'+point.tags[m]+'</span><span class="close close'+m+'">x</span></li>';
 				}				
-			contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/><input type="submit" id="addTagButton"/></div></div>';
+			contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/></div><div><input type="submit" id="addTagButton"/></div></div>';
 
 		    var marker = new google.maps.Marker({
 		        position: point.glatlng,
@@ -82,11 +76,58 @@ Description: Javascript for Project 2
 		        title: 'Click to add tags',
 		        });
 		    point.Gmarker = marker;
+		    len = point.tags.length;
+		    
+		    // added listeners to each of the markers for the user to click. The users will be able to delete the tags one by one.
 
 		    google.maps.event.addListener(marker, 'click', function() {
 		        infowindow.setContent(contentString); 
 		        infowindow.open(map,marker);
+		        $(".close").live("click", function(event){
+				    var cls = $(this).attr('class');
+				    var index;
+				    for (var i = 0; i < len; i++)
+				        {
+				            if (cls.indexOf('close' + i)>=0)
+				                index = i;
+				        }
+				    $('.close' + index).remove();
+				    point.tags.splice(index,1);
+				});
+
+		     //This is used for the user to add new tags. The new tags added should also be delatable. 
+		    // I'm not sure how to update the same point to pointstore after having added and removed tags
+				$("#addTagButton").live("click", function(event){
+					var asd = $("#addtag").val();
+					point.tags.push(asd);
+					
+					console.log(asd);
+				    var contentString = '<div id="info">' +
+								'<h2>'+point.name+'</h2>';
+					contentString += '<ul id="taglist">'
+						for (n in point.tags)
+						{
+							contentString += '<li class="tag close'+n+'"><span class="tags">'+point.tags[n]+'</span><span class="close close'+n+'">x</span></li>';
+						}				
+					contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/></div><div><input type="submit" id="addTagButton"/></div></div>';
+					infowindow.setContent("");
+					infowindow.setContent(contentString);
+					len = point.tags.length;
+					$(".close").live("click", function(event){
+					    var cls = $(this).attr('class');
+					    var index;
+					    for (var i = 0; i < len; i++)
+					        {
+					            if (cls.indexOf('close' + i)>=0)
+					                index = i;
+					        }
+					    $('.close' + index).remove();
+					    point.tags.splice(index,1);
+				    console.log(point);
+					});
+				});
 		        });
+		
 		};
 
 
@@ -98,6 +139,8 @@ Description: Javascript for Project 2
       	point.Gmarker.setMap(null);
       };
 
+
+    //This function is used to add new markers and get input from the user. I have a problem if the user add more than one marker.
 	function placeMarker(a){
 		var b = new Point();
           marker = new google.maps.Marker({
@@ -115,7 +158,7 @@ Description: Javascript for Project 2
 		    {
 		    	infowindow.close();
 		    }
-
+		    infowindow.setContent(""); 
 		    infowindow.setContent(contentForm); 			
 		    infowindow.open(map,marker);
 
@@ -127,14 +170,10 @@ Description: Javascript for Project 2
 					console.log(b);
 					psx.updatePoint(b);
 					infowindow.close();
+					return false;
 				    });
 					  
-      }
+    }
  
-
-
-
-
-
 })();
 
