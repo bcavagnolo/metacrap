@@ -66,64 +66,9 @@ Description: Javascript for Project 2
 		        title: 'Click to add tags',
 		        });
 		    point.Gmarker = marker;
-		    len = point.tags.length;
+		    handleListener(marker, point);
 		    
-		    // added listeners to each of the markers for the user to click. The users will be able to delete the tags one by one.
 
-		    google.maps.event.addListener(marker, 'click', function() {
-				var contentString = '<div id="info">' +
-					'<h2>'+point.name+'</h2>';
-				contentString += '<ul id="taglist">'
-				for (m in point.tags)
-				{
-					contentString += '<li class="tag" id="tag_' + point.idx + '_' + m + '">' +
-						'<span class=tags id="content-tag_' + point.idx + '_' + m + '">'+point.tags[m]+'</span>' +
-						'<span class="close close' + point.idx + '" id="close-tag_' + point.idx + '_' + m + '">x</span></li>';
-				}
-				contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/></div><div><input type="submit" id="addTagButton"/></div></div>';
-				infowindow.setContent(contentString);
-				infowindow.open(map,marker);
-				$(".close" + point.idx).live("click", function(event){
-					var id = this.id.split('-')[1];
-					var tag = $('#content-' + id).html();
-					i = point.tags.indexOf(tag);
-					point.tags.splice(i,1);
-					$('#' + id).remove();
-				});
-
-		     //This is used for the user to add new tags. The new tags added should also be delatable. 
-		    // I'm not sure how to update the same point to pointstore after having added and removed tags
-				$("#addTagButton").live("click", function(event){
-					var asd = $("#addtag").val();
-					point.tags.push(asd);
-					
-					console.log(asd);
-				    var contentString = '<div id="info">' +
-								'<h2>'+point.name+'</h2>';
-					contentString += '<ul id="taglist">'
-						for (n in point.tags)
-						{
-							contentString += '<li class="tag close'+n+'"><span class="tags">'+point.tags[n]+'</span><span class="close close'+n+'">x</span></li>';
-						}				
-					contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag"/></div><div><input type="submit" id="addTagButton"/></div></div>';
-					infowindow.setContent("");
-					infowindow.setContent(contentString);
-					len = point.tags.length;
-					$(".close").live("click", function(event){
-					    var cls = $(this).attr('class');
-					    var index;
-					    for (var i = 0; i < len; i++)
-					        {
-					            if (cls.indexOf('close' + i)>=0)
-					                index = i;
-					        }
-					    $('.close' + index).remove();
-					    point.tags.splice(index,1);
-				    console.log(point);
-					});
-				});
-		        });
-		
 		};
 
 
@@ -138,37 +83,96 @@ Description: Javascript for Project 2
 
     //This function is used to add new markers and get input from the user. I have a problem if the user add more than one marker.
 	function placeMarker(a){
-		var b = new Point();
-          marker = new google.maps.Marker({
+		var c = new Point();
+          var marker1 = new google.maps.Marker({
           position: a,
           map: map,
           title: 'Add info to point'
         });
-        b.Gmarker = marker;
-        b.posn = [];
-        b.posn.push(a.Xa);
-        b.posn.push(a.Ya);
+        c.Gmarker = marker1;
+        c.posn = [];
+        c.tags = [];
+        c.posn.push(a.Xa);
+        c.posn.push(a.Ya);
+        psx.updatePoint(c);
+        console.log(c);
 
-		    var contentForm = '<label>Name:</label><input type="text" id="addNewName"/><br><label>Add Entity Type:</label><input type="text" id="addNewEntity"/><br><label>Add tag:</label><input type="text" id="addNewTag"/><br><input type="submit" id="addTagForm"/>';
+		    var contentForm = buildWindow(c);
 		    if (infowindow)
 		    {
 		    	infowindow.close();
 		    }
 		    infowindow.setContent(""); 
 		    infowindow.setContent(contentForm); 			
-		    infowindow.open(map,marker);
+		    handleListener(marker1, c);
 
-				$('#addTagForm').live("click", function(event){
-					b.name = $("#addNewName").val();
-					b.type = $("#addNewEntity").val();
-					b.tags = [];
-					b.tags.push($("#addNewTag").val());
-					console.log(b);
+					  
+    }
+
+
+    function buildWindow(a){
+    		if(a.name == null)
+    		{
+    			a.name = "Enter the name";
+    		}
+
+    		var contentString = '<div id="info">' +
+					'<input type="text" id="name'+a.idx+'" value="'+a.name+'">';
+				contentString += '<ul id="taglist">'
+				console.log(a.tags)
+				for (m in a.tags)
+				{
+					contentString += '<li class="tag" id="tag_' + a.idx + '_' + m + '">' +
+						'<span class=tags id="content-tag_' + a.idx + '_' + m + '">'+a.tags[m]+'</span>' +
+						'<span class="close close' + a.idx + '" id="close-tag_' + a.idx + '_' + m + '">x</span></li>';
+				}
+				contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag'+ a.idx +'"/></div><div><input type="submit" value="Add" id="addTagButton'+a.idx+'"/></div><div><input type="submit" value="save" id="saveButton'+a.idx+'"/></div></div>';
+			//console.log(contentString);
+			return contentString;
+
+    };
+
+    function handleListener(marker2, b){
+
+    			google.maps.event.addListener(marker2, 'click', function() {
+		    	var contentString = buildWindow(b);
+				infowindow.setContent(contentString);
+				infowindow.open(map,marker2);
+				console.log(b);
+				$("#addTagButton"+ b.idx).live("click", function(event){
+					console.log("addTagButton Listener within the placeMarker");
+					var asd = $("#addtag"+b.idx).val();
+					console.log(asd);
+					b.name = $("#name"+b.idx).val();
+					console.log(b.name);
+					if (asd != ""){
+						b.tags.push(asd);
+						}
+					//psx.updatePoint(b);
+					var contentString = buildWindow(b);
+					infowindow.setContent(contentString);
+					return false;				
+				});
+				$(".close" + b.idx).live("click", function(event){
+					console.log("close Listener within the placeMarker");
+					var id = this.id.split('-')[1];
+					console.log(id);
+					var tag = $('#content-' + id).html();
+					i = b.tags.indexOf(tag);
+					b.tags.splice(i,1);
+					$('#' + id).remove();
+					psx.updatePoint(b);
+					return false;
+				});
+
+				$('#saveButton'+ b.idx).live("click", function(event){
+					console.log(this);
 					psx.updatePoint(b);
 					infowindow.close();
 					return false;
-				    });
-					  
+				});
+				
+			});
     }
  
 })();
