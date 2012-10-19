@@ -93,6 +93,7 @@ function PointStore(options) {
     plugins: [
       [ 'fuzzySearch' ]
     ],
+    page: 100000, // hack.  Use a really big "page" size so that all items appear
   };
   var points = new List(options.listID, this.listOptions);
   this.points = points;
