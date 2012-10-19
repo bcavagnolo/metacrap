@@ -126,22 +126,25 @@ PointStore.prototype.load = function(success) {
   $.ajax({
     ps: ps,
     psSuccess: success,
-    url: this._getURL(this.end),
+    url: this.options.openKVURL + this.options.nameSpace + '*',
     dataType: "jsonp",
     success: function(data) {
       if (!data) {
-        /* in this case, we're done */
         if (this.psSuccess) {
           this.psSuccess();
         }
         return;
       }
-      if (data != "deleted") {
-        this.ps.points.add(JSON.parse(data));
+      newPoints = JSON.parse(data);
+      for (p in newPoints) {
+        if (newPoints[p] != "deleted") {
+          this.ps.points.add(newPoints[p]);
+        }
+        this.ps.end++;
       }
-      this.ps.end++;
-      /* Recursion.  Bold.  Hopefully we won't run out of stack. */
-      this.ps.load(this.psSuccess);
+      if (this.psSuccess) {
+        this.psSuccess();
+      }
     }
   });
 };
@@ -233,7 +236,7 @@ PointStore.prototype.updatePoint = function(p, success) {
  */
 PointStore.prototype.removePoint = function(p, done) {
   data = new Object();
-  data[this.options.nameSpace + "_" + p.idx] = "deleted";
+  data[this.options.nameSpace + "_" + p.idx] = '"deleted"';
   ps = this;
   $.ajax({
     ps: ps,
