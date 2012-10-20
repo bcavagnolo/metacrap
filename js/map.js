@@ -11,12 +11,13 @@ Description: Javascript for Project 2
 	//declare the global variables
 	var map, infowindow;
 	var tagArray;
+	var newPoint = null;
 	var index;
 	var listenerHandle;
 	var len;
 	var psx;
 	var opt = {
-    nameSpace: "projectTwoTestPoints",
+	nameSpace: "projectTwoTestPoints",
     openKVURL: "http://riyadh.cusp.berkeley.edu/",
     listID: 'point-store-list',
     createPointDisplay: createMarker,
@@ -52,8 +53,11 @@ Description: Javascript for Project 2
 		        placeMarker(e.latLng);
 		        });
 		});
-	}
 
+		$("#addTagButton-1").live("click", function(event){
+			return addTag(null);
+		});
+	}
 	/**
 	 * The markers get created when the page loads initially. 
 	 */
@@ -79,25 +83,54 @@ Description: Javascript for Project 2
       	point.Gmarker.setMap(null);
       };
 
-
     //This function is used to add new markers and get input from the user. I have a problem if the user add more than one marker.
 	function placeMarker(a){
-		var c = new Point();
+		if (newPoint) {
+			console.log("WARNING: creating a new point but newPoint not null");
+		}
+		newPoint = new Point();
           var marker1 = new google.maps.Marker({
           position: a,
           map: map,
           title: 'Add info to point'
         });
-        c.Gmarker = marker1;
-        c.posn = [];
-        c.posn.push(a.Xa);
-        c.posn.push(a.Ya);
-        console.log(c);			
-		    handleListener(c, marker1);
-
-					  
+		newPoint.Gmarker = marker1;
+		newPoint.tags = [];
+		newPoint.posn = [];
+		newPoint.posn.push(a.Xa);
+		newPoint.posn.push(a.Ya);
+		console.log(newPoint);
+		var contentString = buildWindow(newPoint);
+		var infowindow = new google.maps.InfoWindow();
+		infowindow.setContent(contentString);
+		infowindow.open(map, marker1);
     }
 
+	// add a tag to a point,
+	function addTag(point) {
+		if (!point) {
+			if (!newPoint) {
+				console.log("WARNING: addTag called without a point and newPoint is null")
+				return false;
+			}
+			point = newPoint;
+		}
+		var asd = $("#addtag"+point.idx).val();
+		if (asd != "")
+		{
+			var n = point.tags.length;
+			point.tags.push(asd);
+			var newName = $("#name"+point.idx).val();
+			$("#name"+point.idx).val(newName);
+			$("#taglist_"+point.idx).append('<li class="tag" id="tag_' + point.idx + '_' + n + '">' +
+											'<span class=tags id="content-tag_' + point.idx + '_' + n + '">'+asd+'</span>' +
+											'<span class="close close' + point.idx + '" id="close-tag_' + point.idx + '_' + n + '">x</span></li>');
+			$("#addtag"+point.idx).val("");
+			console.log("add");
+			console.log(tagArray);
+		}
+		return false;
+	}
 
     function buildWindow(a){
     		tagArray = a.tags;;
@@ -108,7 +141,7 @@ Description: Javascript for Project 2
 
     		var contentString = '<div class="info" id="info_'+a.idx+'">' +
 					'<input type="text" id="name'+a.idx+'" value="'+a.name+'">';
-				contentString += '<ul id="taglist">'
+				contentString += '<ul id="taglist_' + a.idx + '">'
 				//console.log(a.tags)
 				for (m in a.tags)
 				{
@@ -149,22 +182,7 @@ Description: Javascript for Project 2
 			   	
 
     			$("#addTagButton"+ b.idx).live("click", function(event){
- 					console.log(n);
-					var asd = $("#addtag"+b.idx).val();
-					if (asd != "")
-					{
-						tagArray.push(asd);
-						var newName = $("#name"+b.idx).val();
-						$("#name"+b.idx).val(newName);
-						$("#info_"+b.idx+" ul").append('<li class="tag" id="tag_' + b.idx + '_' + n + '">' +
-							'<span class=tags id="content-tag_' + b.idx + '_' + n + '">'+asd+'</span>' +
-							'<span class="close close' + b.idx + '" id="close-tag_' + b.idx + '_' + n + '">x</span></li>');
-						++n;
-						$("#addtag"+b.idx).val("");
-						console.log("add");
-						console.log(tagArray);
-					}
-					return false;				
+					return addTag(b);
 				});
 				$(".close" + b.idx).live("click", function(event){
 						var id = this.id.split('-')[1];
