@@ -125,25 +125,28 @@ Description: Javascript for Project 2
     function handleListener(b, markerPassed){
 
 			    if (!b.tags){ b.tags = []};
+			    console.log(b.tags);
 			    console.log("The index");
-			    if (b.idx != -1){
+			    if (b.idx !== -1){
 			    	index = b.idx;
 			    }
-			    if (b.idx == -1){
+			    if (b.idx === -1){
 			    	++index;
 			    	b.idx = index;
 			    }
 			    console.log(b.idx);
 			    var n = b.tags.length;
 			    var infowindow = new google.maps.InfoWindow();
+
 			    
 
-		   		google.maps.event.addListener(markerPassed, 'click', function() {
-   				var contentString = buildWindow(b);
-				infowindow.setContent(contentString);
-				infowindow.open(map,markerPassed);
-				console.log(b);
-				});
+			   		google.maps.event.addListener(markerPassed, 'click', function() {
+	   				var contentString = buildWindow(b);
+					infowindow.setContent(contentString);
+					infowindow.open(map,markerPassed);
+					console.log(b);
+					});
+			   	
 
     			$("#addTagButton"+ b.idx).live("click", function(event){
  					console.log(n);
@@ -178,11 +181,12 @@ Description: Javascript for Project 2
 				});
 
 				$('#saveButton'+ b.idx).live("click", function(event){
+					console.log($('#saveButton'+ b.idx));
 					b.name = $("#name"+b.idx).val();
 					b.tags = tagArray;
 					console.log(b.tags);
 					infowindow.close();
-					return false;
+					//psx.updatePoint(b);
 				});
     }
 })();
