@@ -60,6 +60,10 @@ Description: Javascript for Project 2
 		$(".close-1").live("click", function(event){
 			return closeTag(null, this);
 		});
+
+		$("#saveButton-1").live("click", function(event){
+			return savePoint(null);
+		});
 	}
 	/**
 	 * The markers get created when the page loads initially. 
@@ -104,7 +108,7 @@ Description: Javascript for Project 2
 		newPoint.posn.push(a.Ya);
 		console.log(newPoint);
 		var contentString = buildWindow(newPoint);
-		var infowindow = new google.maps.InfoWindow();
+		infowindow = new google.maps.InfoWindow();
 		infowindow.setContent(contentString);
 		infowindow.open(map, marker1);
     }
@@ -138,7 +142,6 @@ Description: Javascript for Project 2
 
 	// remove a tag from a point
 	function closeTag(point, jq) {
-		var id;
 		if (!point) {
 			if (!newPoint) {
 				console.log("WARNING: closeTag called without a point and newPoint is null")
@@ -152,6 +155,23 @@ Description: Javascript for Project 2
 		point.tags.splice(i,1);
 		$('#' + id).remove();
 		return false;
+	}
+
+	function savePoint(point) {
+		if (!point) {
+			if (!newPoint) {
+				console.log("WARNING: savePoint called without a point and newPoint is null")
+				return false;
+			}
+			point = newPoint;
+		}
+
+		console.log($('#saveButton'+ point.idx));
+		point.name = $("#name"+point.idx).val();
+		console.log(point.tags);
+		infowindow.close();
+		psx.updatePoint(point);
+		newPoint = null;
 	}
 
     function buildWindow(a){
@@ -191,7 +211,7 @@ Description: Javascript for Project 2
 			    }
 			    console.log(b.idx);
 			    var n = b.tags.length;
-			    var infowindow = new google.maps.InfoWindow();
+			    infowindow = new google.maps.InfoWindow();
 
 			    
 
@@ -211,12 +231,7 @@ Description: Javascript for Project 2
 				});
 
 				$('#saveButton'+ b.idx).live("click", function(event){
-					console.log($('#saveButton'+ b.idx));
-					b.name = $("#name"+b.idx).val();
-					b.tags = tagArray;
-					console.log(b.tags);
-					infowindow.close();
-					//psx.updatePoint(b);
+					return savePoint(b);
 				});
     }
 })();
