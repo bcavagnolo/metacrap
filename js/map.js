@@ -57,6 +57,10 @@ Description: Javascript for Project 2
 		$("#addTagButton-1").live("click", function(event){
 			return addTag(null);
 		});
+
+		$(".close-1").live("click", function(event){
+			return closeTag(null, this);
+		});
 	}
 	/**
 	 * The markers get created when the page loads initially. 
@@ -132,6 +136,24 @@ Description: Javascript for Project 2
 		return false;
 	}
 
+	// remove a tag from a point
+	function closeTag(point, jq) {
+		var id;
+		if (!point) {
+			if (!newPoint) {
+				console.log("WARNING: closeTag called without a point and newPoint is null")
+				return false;
+			}
+			point = newPoint;
+		}
+		var id = jq.id.replace("close-", "");
+		var tag = $('#content-' + id).html();
+		i = point.tags.indexOf(tag);
+		point.tags.splice(i,1);
+		$('#' + id).remove();
+		return false;
+	}
+
     function buildWindow(a){
     		tagArray = a.tags;;
     		if(a.name == null)
@@ -185,17 +207,7 @@ Description: Javascript for Project 2
 					return addTag(b);
 				});
 				$(".close" + b.idx).live("click", function(event){
-						var id = this.id.split('-')[1];
-						var tag = $('#content-' + id).html();
-						i = b.tags.indexOf(tag);
-						tagArray.splice(i,1);
-						--n;
-						console.log(id);
-						console.log($('#' + id));
-						$('#' + id).remove();
-						console.log("remove");
-						console.log(tagArray);
-						return false;
+					return closeTag(b, this);
 				});
 
 				$('#saveButton'+ b.idx).live("click", function(event){
