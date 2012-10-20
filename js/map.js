@@ -25,8 +25,7 @@ Description: Javascript for Project 2
     hidePoint: hideMarker,
     searchBoxID: 'tag',
 	};
-	
-
+	var uid = 0;
 	window.onload = function(){ 
 
 		//load the Pointstore
@@ -126,12 +125,13 @@ Description: Javascript for Project 2
 			point.tags.push(asd);
 			var newName = $("#name"+point.idx).val();
 			$("#name"+point.idx).val(newName);
-			$("#taglist_"+point.idx).append('<li class="tag" id="tag_' + point.idx + '_' + n + '">' +
-											'<span class=tags id="content-tag_' + point.idx + '_' + n + '">'+asd+'</span>' +
-											'<span class="close close' + point.idx + '" id="close-tag_' + point.idx + '_' + n + '">x</span></li>');
+			$("#taglist_"+point.idx).append('<li class="tag" id="tag_' + point.idx + '_' + uid + '">' +
+											'<span class=tags id="content-tag_' + point.idx + '_' + uid + '">'+asd+'</span>' +
+											'<span class="close close' + point.idx + '" id="close-tag_' + point.idx + '_' + uid + '">x</span></li>');
 			$("#addtag"+point.idx).val("");
 			console.log("add");
 			console.log(tagArray);
+			uid++;
 		}
 		return false;
 	}
