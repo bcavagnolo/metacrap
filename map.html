@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <title>My first Google Map</title>
+    <title>MapCrap</title>
     
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
     <script type="text/javascript" src="js/map.js"></script>
@@ -20,13 +20,15 @@
   <body>
     <div id="container">
 
-              <div id="filterTags">
+        <div id="header">
+            <h1>MapCrap</h1>
+            <div id="filterTags">
 
-                    <label for="filterTags">Filter Tags:</label>
+                    <label for="filterTags">Filter Results:</label>
                     <input type="text" name="filterTags" id="tag"/>
-                    <input type="submit" id="tagbutton" value="Go!" />
 
               </div>
+        </div>
               <div id="point-store-list">
                   <ul class="list">
                   </ul>

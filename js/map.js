@@ -17,7 +17,7 @@ Description: Javascript for Project 2
 	var len;
 	var psx;
 	var opt = {
-	nameSpace: "projectTwoTestPoints",
+    nameSpace: "osmBaseData",
     openKVURL: "http://riyadh.cusp.berkeley.edu/",
     listID: 'point-store-list',
     createPointDisplay: createMarker,
@@ -35,7 +35,7 @@ Description: Javascript for Project 2
 		var fix = new google.maps.LatLng(37.8717, -122.2728)
 		var options = {
 					center: fix,
-					zoom: 13,
+					zoom: 16,
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
 					mapTypeControl: true,
 					mapTypeControlOptions: {
@@ -200,8 +200,6 @@ Description: Javascript for Project 2
     function handleListener(b, markerPassed){
 
 			    if (!b.tags){ b.tags = []};
-			    console.log(b.tags);
-			    console.log("The index");
 			    if (b.idx !== -1){
 			    	index = b.idx;
 			    }
@@ -209,7 +207,6 @@ Description: Javascript for Project 2
 			    	++index;
 			    	b.idx = index;
 			    }
-			    console.log(b.idx);
 			    var n = b.tags.length;
 			    infowindow = new google.maps.InfoWindow();
 

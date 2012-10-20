@@ -98,10 +98,7 @@ function PointStore(options) {
   var points = new List(options.listID, this.listOptions);
   this.points = points;
   if (options.searchBoxID) {
-    console.log("the entire list");
-    console.log($('#'+ options.searchBoxID));
     $('#'+ options.searchBoxID).keyup(function() {
-         //console.log(options.searchBoxID);
       points.fuzzySearch($(this).val());
     });
   }
