@@ -9,7 +9,9 @@ Description: Javascript for Project 2
 
 
 	//declare the global variables
-	var map, marker, infowindow;
+	var map, infowindow;
+	var tagArray;
+	var index;
 	var listenerHandle;
 	var len;
 	var psx;
@@ -22,7 +24,7 @@ Description: Javascript for Project 2
     hidePoint: hideMarker,
     searchBoxID: 'tag',
 	};
-	var infowindow = new google.maps.InfoWindow();
+	
 
 	window.onload = function(){ 
 
@@ -57,8 +59,6 @@ Description: Javascript for Project 2
 	 */
 
 		function createMarker(point) {
-
-
 			point.glatlng = new google.maps.LatLng(point.posn[0], point.posn[1]);
 		    var marker = new google.maps.Marker({
 		        position: point.glatlng,
@@ -66,9 +66,8 @@ Description: Javascript for Project 2
 		        title: 'Click to add tags',
 		        });
 		    point.Gmarker = marker;
-		    handleListener(marker, point);
-		    
 
+		    handleListener(point, marker);
 		};
 
 
@@ -91,35 +90,26 @@ Description: Javascript for Project 2
         });
         c.Gmarker = marker1;
         c.posn = [];
-        c.tags = [];
         c.posn.push(a.Xa);
         c.posn.push(a.Ya);
-        psx.updatePoint(c);
-        console.log(c);
-
-		    var contentForm = buildWindow(c);
-		    if (infowindow)
-		    {
-		    	infowindow.close();
-		    }
-		    infowindow.setContent(""); 
-		    infowindow.setContent(contentForm); 			
-		    handleListener(marker1, c);
+        console.log(c);			
+		    handleListener(c, marker1);
 
 					  
     }
 
 
     function buildWindow(a){
+    		tagArray = a.tags;;
     		if(a.name == null)
     		{
     			a.name = "Enter the name";
     		}
 
-    		var contentString = '<div id="info">' +
+    		var contentString = '<div class="info" id="info_'+a.idx+'">' +
 					'<input type="text" id="name'+a.idx+'" value="'+a.name+'">';
 				contentString += '<ul id="taglist">'
-				console.log(a.tags)
+				//console.log(a.tags)
 				for (m in a.tags)
 				{
 					contentString += '<li class="tag" id="tag_' + a.idx + '_' + m + '">' +
@@ -132,48 +122,68 @@ Description: Javascript for Project 2
 
     };
 
-    function handleListener(marker2, b){
+    function handleListener(b, markerPassed){
 
-    			google.maps.event.addListener(marker2, 'click', function() {
-		    	var contentString = buildWindow(b);
+			    if (!b.tags){ b.tags = []};
+			    console.log("The index");
+			    if (b.idx != -1){
+			    	index = b.idx;
+			    }
+			    if (b.idx == -1){
+			    	++index;
+			    	b.idx = index;
+			    }
+			    console.log(b.idx);
+			    var n = b.tags.length;
+			    var infowindow = new google.maps.InfoWindow();
+			    
+
+		   		google.maps.event.addListener(markerPassed, 'click', function() {
+   				var contentString = buildWindow(b);
 				infowindow.setContent(contentString);
-				infowindow.open(map,marker2);
+				infowindow.open(map,markerPassed);
 				console.log(b);
-				$("#addTagButton"+ b.idx).live("click", function(event){
-					console.log("addTagButton Listener within the placeMarker");
+				});
+
+    			$("#addTagButton"+ b.idx).live("click", function(event){
+ 					console.log(n);
 					var asd = $("#addtag"+b.idx).val();
-					console.log(asd);
-					b.name = $("#name"+b.idx).val();
-					console.log(b.name);
-					if (asd != ""){
-						b.tags.push(asd);
-						}
-					//psx.updatePoint(b);
-					var contentString = buildWindow(b);
-					infowindow.setContent(contentString);
+					if (asd != "")
+					{
+						tagArray.push(asd);
+						var newName = $("#name"+b.idx).val();
+						$("#name"+b.idx).val(newName);
+						$("#info_"+b.idx+" ul").append('<li class="tag" id="tag_' + b.idx + '_' + n + '">' +
+							'<span class=tags id="content-tag_' + b.idx + '_' + n + '">'+asd+'</span>' +
+							'<span class="close close' + b.idx + '" id="close-tag_' + b.idx + '_' + n + '">x</span></li>');
+						++n;
+						$("#addtag"+b.idx).val("");
+						console.log("add");
+						console.log(tagArray);
+					}
 					return false;				
 				});
 				$(".close" + b.idx).live("click", function(event){
-					console.log("close Listener within the placeMarker");
-					var id = this.id.split('-')[1];
-					console.log(id);
-					var tag = $('#content-' + id).html();
-					i = b.tags.indexOf(tag);
-					b.tags.splice(i,1);
-					$('#' + id).remove();
-					psx.updatePoint(b);
-					return false;
+						var id = this.id.split('-')[1];
+						var tag = $('#content-' + id).html();
+						i = b.tags.indexOf(tag);
+						tagArray.splice(i,1);
+						--n;
+						console.log(id);
+						console.log($('#' + id));
+						$('#' + id).remove();
+						console.log("remove");
+						console.log(tagArray);
+						return false;
 				});
 
 				$('#saveButton'+ b.idx).live("click", function(event){
-					console.log(this);
-					psx.updatePoint(b);
+					b.name = $("#name"+b.idx).val();
+					b.tags = tagArray;
+					console.log(b.tags);
 					infowindow.close();
 					return false;
 				});
-				
-			});
     }
- 
 })();
 
