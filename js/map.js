@@ -19,8 +19,7 @@ Description: Javascript for Project 2
 	var saved;
 	var currentMark;
 	var opt = {
-    //nameSpace: "osmBaseData",
-    nameSpace:"projectTwoTestPoints",
+    nameSpace: "osmBaseData",
     openKVURL: "http://riyadh.cusp.berkeley.edu/",
     listID: 'point-store-list',
     createPointDisplay: createMarker,
@@ -241,7 +240,6 @@ Description: Javascript for Project 2
 					return addTag(b);
 				});
 				$(".close" + b.idx).live("click", function(event){
-					console.log(b.idx);
 					return closeTag(b, this);
 				});
 
