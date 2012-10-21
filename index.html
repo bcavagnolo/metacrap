@@ -1,33 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-		<title>Mapacrap</title>
-
-		<!-- stylesheet -->
-		<link rel="stylesheet" type="text/css" href="css/style.css">
-
-		<!-- jquery from Google -->
-		<!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script-->
-
-		<!-- our own jQuery files -->
-		<script src="js/jquery-1.8.1.min.js"></script>
-		<script src="js/jquery-ui-1.8.23.min.js"></script>
-
-		<!-- our .js file -->
-		<script src="js/autocomplete.js"></script>
-	</head>
-	
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>MapCrap</title>
+    
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language=en"></script>
+    <script type="text/javascript" src="js/map.js"></script>
+    <script src="js/jquery-1.8.0.min.js"></script>
+    <script src="js/list.js"></script>
+    <script src="js/list.fuzzySearch.js"></script>
+    <script src="js/PointStore.js"></script>
+    <script src="js/jquery-1.8.1.min.js"></script>
+    <script src="js/jquery-ui-1.8.23.min.js"></script>
+    <!--<script type="text/javascript" src="js/PointStore-spec.js"></script> -->
+    <link type="text/css" rel="stylesheet" media="all" href="css/mapstyle.css" />
 
 
-	<body>
+  </head>
+  <body>
+    <div id="container">
 
-		<!-- input box for the autocomplete. -->
-		<!-- set any input's class to "mapTaggable" and the jQuery will make it category autocomplete-able -->
-		<div id="tagger">
-			<label for="mapTag">Tags:</label> <input id="mapTag" name="mapTag" class="mapTaggable"></input>
-		</div>
+        <div id="header">
+            <h1>MapCrap</h1>
+            <div id="filterTags">
 
-	</body>
-</html>
+                    <label for="filterTags">Filter Results:</label>
+                    <input type="text" name="filterTags" id="tag"/>
+
+              </div>
+        </div>
+              <div id="point-store-list">
+                  <ul class="list">
+                  </ul>
+              </div>
+
+
+
+          <div id="map">
+          </div>
+          <h3>Some map point data <a href="http://www.openstreetmap.org/copyright">Copyright OpenStreetMap contributors</a> CC BY SA</h3>
+    </div>
+  </body>

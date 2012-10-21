@@ -197,17 +197,17 @@ Description: Javascript for Project 2
     		}
 
     		var contentString = '<div class="info" id="info_'+a.idx+'">' +
-					'<input type="text" id="name'+a.idx+'" value="'+a.name+'">';
-				contentString += '<ul id="taglist_' + a.idx + '">'
+					'<label>Name:</label><input type="text" id="name'+a.idx+'" value="'+a.name+'"/>';
+				contentString += '<div id="div0"><ul id="taglist_' + a.idx + '">'
 				//console.log(a.tags)
 				for (m in a.tags)
 				{
 					contentString += '<li class="tag" id="tag_' + a.idx + '_' + m + '">' +
 						'<span class=tags id="content-tag_' + a.idx + '_' + m + '">'+a.tags[m]+'</span>' +
-						'<span class="close close' + a.idx + '" id="close-tag_' + a.idx + '_' + m + '">x</span></li>';
+						'<span class="close close' + a.idx + '" id="close-tag_' + a.idx + '_' + m + '"> x</span></li>';
 				}
-				contentString += '</ul><div><label>Add tag:</label><input type="text" id="addtag'+ a.idx +'"/></div><div><input type="submit" value="Add" id="addTagButton'+a.idx+'"/></div><div><input type="submit" value="save" id="saveButton'+a.idx+'"/></div></div>';
-			//console.log(contentString);
+				contentString += '</ul></div><div id="div1"><label>Add tag:</label><input type="text" id="addtag'+ a.idx +'"/></div><div id="div2"><input type="submit" value="Add" id="addTagButton'+a.idx+'"/></div><div id="div3"><input type="submit" value="Save" id="saveButton'+a.idx+'"/></div></div>';
+			console.log(contentString);
 			return contentString;
 
     };
