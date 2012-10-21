@@ -16,8 +16,11 @@ Description: Javascript for Project 2
 	var listenerHandle;
 	var len;
 	var psx;
+	var saved;
+	var currentMark;
 	var opt = {
-    nameSpace: "osmBaseData",
+    //nameSpace: "osmBaseData",
+    nameSpace:"projectTwoTestPoints",
     openKVURL: "http://riyadh.cusp.berkeley.edu/",
     listID: 'point-store-list',
     createPointDisplay: createMarker,
@@ -64,6 +67,8 @@ Description: Javascript for Project 2
 		$("#saveButton-1").live("click", function(event){
 			return savePoint(null);
 		});
+
+
 	}
 	/**
 	 * The markers get created when the page loads initially. 
@@ -102,6 +107,7 @@ Description: Javascript for Project 2
           title: 'Add info to point'
         });
 		newPoint.Gmarker = marker1;
+		currentMark = marker1;
 		newPoint.tags = [];
 		newPoint.posn = [];
 		newPoint.posn.push(a.Xa);
@@ -111,6 +117,16 @@ Description: Javascript for Project 2
 		infowindow = new google.maps.InfoWindow();
 		infowindow.setContent(contentString);
 		infowindow.open(map, marker1);
+		saved = "false";
+		console.log(saved);
+		google.maps.event.addListener(infowindow,'closeclick',function(){
+			if (newPoint.idx == -1){
+				if (saved == "false"){
+			   		currentMark.setMap(null);
+			   	}
+		   	}
+		});
+
     }
 
 	// add a tag to a point,
@@ -216,6 +232,7 @@ Description: Javascript for Project 2
 	   				var contentString = buildWindow(b);
 					infowindow.setContent(contentString);
 					infowindow.open(map,markerPassed);
+
 					console.log(b);
 					});
 			   	
@@ -224,11 +241,13 @@ Description: Javascript for Project 2
 					return addTag(b);
 				});
 				$(".close" + b.idx).live("click", function(event){
+					console.log(b.idx);
 					return closeTag(b, this);
 				});
 
 				$('#saveButton'+ b.idx).live("click", function(event){
 					return savePoint(b);
+					saved = "true";
 				});
     }
 })();
