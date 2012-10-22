@@ -161,8 +161,29 @@
 
       if(!!preg_match('/^[-_a-z0-9]{5,128}\*$/i', $key)) {
         //multi-record wildcard fetch
-        $value = "[";
         $i = 0;
+        if (isset($_GET['start'])) {
+          $i = $_GET['start'];
+          if (!is_numeric($i))
+	        self::Response(400, array('error' => 'bad_start_index',
+	                                  'message' => "Non-numeric start index"));
+          if ($i < 0)
+	          self::Response(400, array('error' => 'bad_start_index',
+	                                    'message' => "start index must be positive"));
+        }
+        $count = -1;
+        if (isset($_GET['count'])) {
+          $count = $_GET['count'];
+          if (!is_numeric($count))
+	        self::Response(400, array('error' => 'bad_count',
+	                                  'message' => "Non-numeric count"));
+          if ($count <= 0)
+	        self::Response(400, array('error' => 'bad_count',
+	                                  'message' => "count must be positive"));
+        }
+
+        $value = "[";
+        $end = $i + $count;
         while(true) {
           $k = str_replace("*", "_" . $i, $key);
           $v = OpenKeyval_Storage_Cached::Get($k);
@@ -175,6 +196,9 @@
             break;
           }
           $i = $i + 1;
+          if ($count > -1 && $i == $end) {
+            break;
+          }
         }
         if (!!preg_match('/^\[$/i', $value)) {
            $value = NULL;
