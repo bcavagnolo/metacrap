@@ -95,16 +95,20 @@ function PointStore(options) {
     ],
     page: 100000, // hack.  Use a really big "page" size so that all items appear
   };
-  var points = new List(options.listID, this.listOptions);
-  this.points = points;
-  if (options.searchBoxID) {
-    $('#'+ options.searchBoxID).keyup(function() {
-      points.fuzzySearch($(this).val());
-    });
-  }
   this.options = options;
   this.end = 0;
   this.deleting = 0;
+  this.points = null;
+}
+
+PointStore.prototype._createList = function(newPoints) {
+  var points = new List(this.options.listID, this.listOptions, newPoints);
+  this.points = points;
+  if (this.options.searchBoxID) {
+    $('#'+ this.options.searchBoxID).keyup(function() {
+      points.fuzzySearch($(this).val());
+    });
+  }
 }
 
 PointStore.prototype._getURL = function(i, store) {
@@ -118,11 +122,13 @@ PointStore.prototype._getURL = function(i, store) {
  * load points from persistent storage
  * @param {function} function to be called after initial loading is complete
  */
+var loadingPoints = [];
 PointStore.prototype.load = function(success, start) {
   ps = this;
   var step = 100;
   if (start === undefined) {
     start = 0;
+    loadingPoints = [];
   }
   $.ajax({
     ps: ps,
@@ -139,11 +145,16 @@ PointStore.prototype.load = function(success, start) {
       newPoints = JSON.parse(data);
       for (p in newPoints) {
         if (newPoints[p] != "deleted") {
-          this.ps.points.add(newPoints[p]);
+          loadingPoints.push(newPoints[p]);
+          if (this.ps.options.createPointDisplay)
+            this.ps.options.createPointDisplay(newPoints[p]);
+          if (this.ps.options.showPoint)
+            this.ps.options.showPoint(newPoints[p]);
         }
         this.ps.end++;
       }
       if (newPoints.length < step) {
+        ps._createList(loadingPoints);
         if (this.psSuccess) {
           this.psSuccess();
         }
@@ -171,6 +182,8 @@ PointStore.prototype.getByTag = function(tag) {
  * @return (possibly empty) list of points
  */
 PointStore.prototype.getByType = function(type) {
+  if (this.points === null)
+    return [];
   return this.points.values().filter(function(p) {
     return (p.type == type);
   });
@@ -182,6 +195,8 @@ PointStore.prototype.getByType = function(type) {
  * @return (possibly empty) list of points
  */
 PointStore.prototype.getAll = function() {
+  if (this.points === null)
+    return [];
   return this.points.values();
 };
 
@@ -189,6 +204,8 @@ PointStore.prototype.getAll = function() {
  * @return number of points contained in the PointStore
  */
 PointStore.prototype.length = function() {
+  if (this.points === null)
+    return 0;
   return this.points.values().length;
 };
 
@@ -203,6 +220,9 @@ PointStore.prototype.length = function() {
  * members added by the user will be dropped.
  */
 PointStore.prototype.updatePoint = function(p, success) {
+  if (this.points === null) {
+    this._createList();
+  }
   if (p.idx == -1) {
     p.idx = this.end++;
   } else {
@@ -263,7 +283,6 @@ PointStore.prototype.removePoint = function(p, done) {
  * @param {function} to be called after deleting is complete
  */
 PointStore.prototype.deletePointStore = function(done) {
-
   data = new Object();
   data[this.options.nameSpace + "_" + this.deleting++] = null;
   ps = this;
@@ -277,7 +296,7 @@ PointStore.prototype.deletePointStore = function(done) {
       if (data.status == "did_not_exist") {
         this.ps.end = 0;
         this.ps.deleting = 0;
-        this.ps.points = new List(this.ps.options.listID, this.ps.listOptions);
+        this.ps.points = null;
         if (this.psDone) {
           this.psDone();
         }

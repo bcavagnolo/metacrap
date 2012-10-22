@@ -74,6 +74,9 @@ Description: Javascript for Project 2
 	 */
 
 		function createMarker(point) {
+          if (point.glatlng !== undefined && point.Gmarker !== undefined) {
+            return;
+          }
 			point.glatlng = new google.maps.LatLng(point.posn[0], point.posn[1]);
 		    var marker = new google.maps.Marker({
 		        position: point.glatlng,
@@ -87,10 +90,14 @@ Description: Javascript for Project 2
 
 
       function showMarker(point){
+        if (!point.Gmarker)
+          return;
       	point.Gmarker.setMap(map);
       };
 
       function hideMarker(point){
+        if (!point.Gmarker)
+          return;
       	point.Gmarker.setMap(null);
       };
 
