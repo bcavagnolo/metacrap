@@ -31,11 +31,11 @@ name and some tags.
 Team
 ====
 
-Bharathkumar Gunasekaran: Hacker & Designer - Set up the Interface &
+Bharathkumar Gunasekaran - Hacker & Designer - Set up the Interface &
 Interaction with Google Maps API. Was also resposible for enabling all the
 interactions with the user.
 
-Brian Cavagnolo: Hacker & Designer - Designed, implemented and optimized the
+Brian Cavagnolo - Hacker & Designer - Designed, implemented and optimized the
 "point store," which is the storage solution for the project. Integrated the
 Fuzzy search algorithm.
 
@@ -48,7 +48,7 @@ Technologies
     Jasmine for unit testing
     List.js for fuzzy searching
 
-Depolying
+Deploying
 =========
 
 The PointStore relies on a modified OpenKeyVal (http://openkeyval.org/) server.
@@ -75,6 +75,10 @@ MapCrap to share a single back end.
 Finally, if you want your MapCrap deploy to begin centered on a different
 geographic location, change the latitude and longitude in map.js.
 
+Testing
+=======================
+We tested on Chrome and Firefox
+
 Quirks and known issues
 =======================
 
@@ -88,4 +92,6 @@ Quirks and known issues
    the points stored in the PointStore, this may result in loading much more
    data than the user intends to view, which may cause undesireable load
    delays.
+   
+3. Corners do not appear rounded in chrome
 
