@@ -158,7 +158,32 @@
     }
 
     public static function HandleGET($key, $command) {
-      $value = OpenKeyval_Storage_Cached::Get($key);
+
+      if(!!preg_match('/^[-_a-z0-9]{5,128}\*$/i', $key)) {
+        //multi-record wildcard fetch
+        $value = "[";
+        $i = 0;
+        while(true) {
+          $k = str_replace("*", "_" . $i, $key);
+          $v = OpenKeyval_Storage_Cached::Get($k);
+          if ($v != NULL) {
+            if (!preg_match('/^\[$/i', $value)) {
+              $value = $value . ",";
+            }
+            $value = $value . $v;
+          } else {
+            break;
+          }
+          $i = $i + 1;
+        }
+        if (!!preg_match('/^\[$/i', $value)) {
+           $value = NULL;
+        } else {
+           $value = $value . "]";
+        }
+      } else {
+        $value = OpenKeyval_Storage_Cached::Get($key);
+      }
       if($value !== NULL) {
         if(strpos($command, '/')) {
           $content_type = $command;
@@ -217,7 +242,7 @@
         $key = substr($key, strlen(self::kReadOnlyKeyPrefix));
         return !!preg_match('/^[a-z0-9]{40}$/i', $key);
       } else {
-        return !!preg_match('/^[-_a-z0-9]{5,128}$/i', $key);
+        return !!preg_match('/^[-_a-z0-9]{5,128}[*]?$/i', $key);
       }
     }
 
