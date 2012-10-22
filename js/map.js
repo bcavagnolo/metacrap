@@ -101,7 +101,7 @@ Description: Javascript for Project 2
       	point.Gmarker.setMap(null);
       };
 
-    //This function is used to add new markers and get input from the user. I have a problem if the user add more than one marker.
+    //This function is used to add new markers and get input from the user.
 	function placeMarker(a){
 		if (newPoint) {
 			console.log("WARNING: creating a new point but newPoint not null");
@@ -209,9 +209,10 @@ Description: Javascript for Project 2
 				//console.log(a.tags)
 				for (m in a.tags)
 				{
-					contentString += '<li class="tag" id="tag_' + a.idx + '_' + m + '">' +
-						'<span class=tags id="content-tag_' + a.idx + '_' + m + '">'+a.tags[m]+'</span>' +
-						'<span class="close close' + a.idx + '" id="close-tag_' + a.idx + '_' + m + '"> x</span></li>';
+					contentString += '<li class="tag" id="tag_' + a.idx + '_' + uid + '">' +
+						'<span class=tags id="content-tag_' + a.idx + '_' + uid + '">'+a.tags[m]+'</span>' +
+						'<span class="close close' + a.idx + '" id="close-tag_' + a.idx + '_' + uid + '"> x</span></li>';
+					uid++;
 				}
 				contentString += '</ul></div><div id="div1"><label>Add tag:</label><input type="text" id="addtag'+ a.idx +'"/></div><div id="div2"><input type="submit" value="Add" id="addTagButton'+a.idx+'"/></div><div id="div3"><input type="submit" value="Save" id="saveButton'+a.idx+'"/></div></div>';
 			console.log(contentString);
