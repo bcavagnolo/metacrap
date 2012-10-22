@@ -77,9 +77,15 @@ geographic location, change the latitude and longitude in map.js.
 
 Quirks and known issues
 =======================
-	????????????
-	
 
-	
-	
+1. When editing an existing point, tags are added to and removed from the
+   underlying point as the user interacts with the dialog.  So even if the user
+   clicks the X on the dialog canceling the edits, the edits will remain until
+   the page is refreshed.
+
+2. All points in the PointStore are loaded when the page loads, as opposed to
+   only loading the data in the current viewport.  Depending on the extent of
+   the points stored in the PointStore, this may result in loading much more
+   data than the user intends to view, which may cause undesireable load
+   delays.
 
