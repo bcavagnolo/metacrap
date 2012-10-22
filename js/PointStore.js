@@ -118,12 +118,16 @@ PointStore.prototype._getURL = function(i, store) {
  * load points from persistent storage
  * @param {function} function to be called after initial loading is complete
  */
-PointStore.prototype.load = function(success) {
+PointStore.prototype.load = function(success, start) {
   ps = this;
+  var step = 100;
+  if (start === undefined) {
+    start = 0;
+  }
   $.ajax({
     ps: ps,
     psSuccess: success,
-    url: this.options.openKVURL + this.options.nameSpace + '*',
+    url: this.options.openKVURL + this.options.nameSpace + '*?start=' + start + '&count=' + step,
     dataType: "jsonp",
     success: function(data) {
       if (!data) {
@@ -139,9 +143,13 @@ PointStore.prototype.load = function(success) {
         }
         this.ps.end++;
       }
-      if (this.psSuccess) {
-        this.psSuccess();
+      if (newPoints.length < step) {
+        if (this.psSuccess) {
+          this.psSuccess();
+        }
+        return;
       }
+      this.ps.load(this.psSuccess, start + step);
     }
   });
 };
